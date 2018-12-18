@@ -1,0 +1,18 @@
+version: '3'
+services:
+  wireguard:
+    container_name: 'wireguard'
+    build: .
+    restart: 'unless-stopped'
+    sysctls:
+      - 'net.ipv4.conf.all.rp_filter=2'
+    cap_add:
+      - net_admin
+      - sys_module
+    ports:
+      - '3000:3000' # grafana
+  grafana:
+    container_name: 'grafana'
+    image: 'grafana/grafana'
+    restart: 'unless-stopped'
+    network_mode: 'service:wireguard'
