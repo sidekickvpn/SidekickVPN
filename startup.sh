@@ -1,30 +1,23 @@
-#!/bin/bash
-set -euo pipefail
+#/bin/bash
 
-wg-quick up wgnet0
+umask 077
+wg genkey | tee privatekey | wg pubkey > publickey
+publickey=$(cat publickey)
 
-VPN_IP=$(grep -Po 'Endpoint\s=\s\K[^:]*' /etc/wireguard/wgnet0.conf)
+# DEBUG
+# echo $publickey
+# hostname -I
 
-function finish {
-    echo "$(date): Shutting down vpn"
-    wg-quick down wgnet0
-}
+# Add private key to wg0.conf
+echo "PrivateKey = "$(cat privatekey) >> /etc/wireguard/wg0.conf
 
-# Our IP address should be the VPN endpoint for the duration of the
-# container, so this function will give us a true or false if our IP is
-# actually the same as the VPN's
-function has_vpn_ip {
-    curl --silent --show-error --retry 10 --fail http://checkip.dyndns.com/ | \
-        grep $VPN_IP
-}
+# echo "" >> /etc/wireguard/wg0.conf
+# echo "[Peer]" >> /etc/wireguard/wg0.conf
+# echo "PublicKey = 8Wv1tJv9fZYmxEaBPaAJUXd65PzVpFTCA2kYBPLKZzQ=" >> /etc/wireguard/wg0.conf
+# echo "Endpoint = 10.90.53.137:51820" >> /etc/wireguard/wg0.conf
+# echo "AllowedIPs = 192.168.2.2/24" >> /etc/wireguard/wg0.conf
 
-# If our container is terminated or interrupted, we'll be tidy and bring down
-# the vpn
-trap finish TERM INT
+# Create/Enable wg0 interface
+wg-quick up wg0
 
-# Every minute we check to our IP address
-while [[ has_vpn_ip ]]; do
-    sleep 60;
-done
-
-echo "$(date): VPN IP address not detected"
+# tcpdump -n -X -i wg0 -w logs/wg0_packets.pcap
