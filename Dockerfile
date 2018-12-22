@@ -8,6 +8,7 @@ RUN add-apt-repository --yes ppa:wireguard/wireguard
 RUN apt-get update
 RUN apt-get install -y wireguard-dkms wireguard-tools 
 RUN apt-get install -y iproute2 iptables tcpdump
+RUN apt-get install -y linux-headers-$(uname -r)
 
 # Copy files to container
 COPY server_wg0.conf /etc/wireguard/wg0.conf
