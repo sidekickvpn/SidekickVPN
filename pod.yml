@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: wireguard-pod
+spec:
+  containers:
+    - name: myshell
+      image: gcr.io/vpn-traffic-analysis/github.com/lukebaal/vpntrafficanalysis:latest
+      volumeMounts:
+        - mountPath: /logs
+          name: logs-volume
+      securityContext:
+        capabilities:
+          add:
+            - NET_ADMIN
+  volumes:
+    - name: logs-volume
+      emptyDir: {}

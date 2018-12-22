@@ -13,3 +13,14 @@ spec:
     spec:
       containers:
         - name: wireguard
+          image: gcr.io/vpn-traffic-analysis/github.com/lukebaal/vpntrafficanalysis:latest
+          volumeMounts:
+            - mountPath: /logs
+              name: logs-volume
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+      volumes:
+        - name: logs-volume
+          emptyDir: {}
