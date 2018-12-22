@@ -20,4 +20,5 @@ echo "PrivateKey = "$(cat privatekey) >> /etc/wireguard/wg0.conf
 # Create/Enable wg0 interface
 wg-quick up wg0
 
-# tcpdump -n -X -i wg0 -w logs/wg0_packets.pcap
+# Begin logging packets
+tcpdump -n -X -i wg0 -w logs/wg0_packets.pcap

@@ -13,10 +13,4 @@ RUN apt-get install -y iproute2 iptables tcpdump
 COPY server_wg0.conf /etc/wireguard/wg0.conf
 COPY startup.sh .
 
-# RUN ./startup.sh
-
-# ENTRYPOINT ["/startup.sh"]
-RUN /bin/bash ./startup.sh
-# CMD ["/bin/bash"]
-
-CMD ["tcpdump", "-n", "-X", "-i", "wg0", "-w", "logs/wg0_packets.pcap"]
+CMD /bin/bash ./startup.sh
