@@ -4,6 +4,7 @@ metadata:
   name: wireguard
   labels:
     name: wireguard-pod
+  namespace: dev
 spec:
   replicas: 1
   template:
@@ -13,7 +14,8 @@ spec:
     spec:
       containers:
         - name: wireguard
-          image: gcr.io/vpn-traffic-analysis/github.com/lukebaal/vpntrafficanalysis:latest
+          # image: gcr.io/vpn-traffic-analysis/github.com/lukebaal/vpntrafficanalysis:latest
+          image: wireguard
           volumeMounts:
             - mountPath: /logs
               name: logs-volume
@@ -21,6 +23,9 @@ spec:
             capabilities:
               add:
                 - NET_ADMIN
+          ports:
+            - containerPort: 51820
+              protocol: UDP
       volumes:
         - name: logs-volume
           emptyDir: {}

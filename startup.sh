@@ -5,8 +5,8 @@ wg genkey | tee privatekey | wg pubkey > publickey
 publickey=$(cat publickey)
 
 # DEBUG
-# echo $publickey
-# hostname -I
+echo Public Key: $publickey
+echo Hostname: $(hostname -i)
 
 # Add private key to wg0.conf
 echo "PrivateKey = "$(cat privatekey) >> /etc/wireguard/wg0.conf
