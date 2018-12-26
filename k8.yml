@@ -1,0 +1,33 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: ${PROJECT_NAME}
+  labels:
+    name: ${PROJECT_NAME}
+  namespace: dev
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ${PROJECT_NAME}
+  template:
+    metadata:
+      labels:
+        app: ${PROJECT_NAME}
+    spec:
+      containers:
+        - name: ${PROJECT_NAME}
+          image: gcr.io/${GOOGLE_PROJECT_ID/github.com/lukebaal/${PROJECT_NAME}:${CIRCLE_SHA1}
+          volumeMounts:
+            - mountPath: /logs
+              name: logs-volume
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          ports:
+            - containerPort: 51820
+              protocol: UDP
+      volumes:
+        - name: logs-volume
+          emptyDir: {}
