@@ -4,7 +4,6 @@ metadata:
   name: ${PROJECT_NAME}
   labels:
     name: ${PROJECT_NAME}
-  namespace: dev
 spec:
   replicas: 3
   selector:
