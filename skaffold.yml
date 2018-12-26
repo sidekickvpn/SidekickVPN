@@ -1,0 +1,10 @@
+apiVersion: skaffold/v1beta2
+kind: Config
+build:
+  artifacts:
+    - image: wireguard
+  local: {}
+deploy:
+  kubectl:
+    manifests:
+      - wireguard.yml
