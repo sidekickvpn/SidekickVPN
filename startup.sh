@@ -4,6 +4,8 @@ umask 077
 wg genkey | tee privatekey | wg pubkey > publickey
 publickey=$(cat publickey)
 
+echo 2 > /proc/sys/net/ipv4/ip_forward
+
 # DEBUG
 echo Public Key: $publickey
 echo Hostname: $(hostname -i)

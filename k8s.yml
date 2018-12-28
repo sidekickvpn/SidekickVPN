@@ -24,9 +24,12 @@ spec:
             capabilities:
               add:
                 - NET_ADMIN
+                - SYS_MODULE
           ports:
             - containerPort: 51820
               protocol: UDP
+          sysctls:
+            - 'net.ipv4.conf.all.rp_filter=2'
       volumes:
         - name: logs-volume
           emptyDir: {}
