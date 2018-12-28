@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:edge
 WORKDIR /usr/app
 
 ARG COMMIT_REF
