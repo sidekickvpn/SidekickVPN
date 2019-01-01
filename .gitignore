@@ -3,3 +3,5 @@ old
 credentials.json
 venv
 .vscode
+*key
+node_modules
