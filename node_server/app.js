@@ -15,36 +15,36 @@ app.set('view engine', 'ejs');
 app.get('/', (req, res) => res.send('Welcome'));
 
 // Add client form
-app.get('/client/add', (req, res) => res.render('add'))
+app.get('/client/add', (req, res) => res.render('add'));
 
 // Get public key
 app.get('/config', (req, res) => {
-  const VPN_NAME = process.env.VPN_NAME || 'wgnet0'
+  const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
   exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
     if (err) {
       console.error(err);
-      res.status(500).json({'Error': err});
+      res.status(500).json({ Error: err });
       return;
     }
     const public_key = stdout.slice(0, stdout.length - 1);
-    res.status(200).json({public_key});
-  })  
+    res.status(200).json({ public_key });
+  });
 });
 
 // Get peer info
 app.get('/client/:public_key', (req, res) => {
-  const VPN_NAME = process.env.VPN_NAME || 'wgnet0'
+  const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
   const { public_key } = req.params;
   exec(`wg show ${VPN_NAME} dump`, (err, stdout, stderr) => {
     if (err) {
       console.error(err);
-      res.status(500).json({'Error': err});
+      res.status(500).json({ Error: err });
       return;
     }
     const peers = stdout.split('\n').map(peer => peer.split('\t'));
     peers.pop();
 
-    const peer = peers.find(peer => peer[0] === public_key)
+    const peer = peers.find(peer => peer[0] === public_key);
     if (peer) {
       // res.status(200).json({ 'public_key': peer[0], 'vpn_ip': peer[1]});
       res.status(200).json({
@@ -57,41 +57,46 @@ app.get('/client/:public_key', (req, res) => {
         persistent_keepalive: peer[7]
       });
     } else {
-      res.status(404).json({"Error": "Invalid Public Key"});
+      res.status(404).json({ Error: 'Invalid Public Key' });
     }
   });
-})
+});
 
 // Add peer to server
 app.post('/client', (req, res) => {
   const { public_key, vpn_ip } = req.body;
-  const VPN_NAME = process.env.VPN_NAME || 'wgnet0'
-  exec(`wg set ${VPN_NAME} peer ${public_key} allowed-ips ${vpn_ip}`, (err, stdout, stderr) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json({'Error': err});
-      return;
+  const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
+  exec(
+    `wg set ${VPN_NAME} peer ${public_key} allowed-ips ${vpn_ip}`,
+    (err, stdout, stderr) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ Error: err });
+        return;
+      }
+      console.log(`Peer ${public_key} added`);
+      res.status(200).json({ 'Peer added': { public_key, vpn_ip } });
     }
-    console.log(`Peer ${public_key} added`);
-    res.status(200).json({ 'Peer added': { public_key, vpn_ip } });
-  });
+  );
 });
 
 // Remove peer from server
 app.delete('/client', (req, res) => {
   const { public_key } = req.body;
-  const VPN_NAME = process.env.VPN_NAME || 'wgnet0'
-  exec(`wg set ${VPN_NAME} peer ${public_key} remove`, (err, stdout, stderr) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json({'Error': err});
-      return;
+  const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
+  exec(
+    `wg set ${VPN_NAME} peer ${public_key} remove`,
+    (err, stdout, stderr) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ Error: err });
+        return;
+      }
+      console.log(`Peer ${public_key} removed`);
+      res.status(200).json({ 'Peer removed': public_key });
     }
-    console.log(`Peer ${public_key} removed`);
-    res.status(200).json({ 'Peer removed': public_key });
-  });
+  );
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
-

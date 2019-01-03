@@ -1,12 +1,14 @@
+import sys
 from scapy.all import rdpcap, IP, TCP, UDP
 
 session_ports = []
-packet = rdpcap("logs/wg0_packets.pcap")
+packet = rdpcap("logs/{}_packets.pcap".format(sys.argv[1]))
 
 for pkt in packet:
     ip_pkt = pkt.getlayer(IP)
-    print("{}".format(ip_pkt))
-    print("TCP? {}, UDP? {}".format(ip_pkt.haslayer(TCP), ip_pkt.haslayer(UDP)))
+    if ip_pkt is None:
+        continue
+    # print("TCP? {}, UDP? {}".format(ip_pkt.haslayer(TCP), ip_pkt.haslayer(UDP)))
     if ip_pkt.haslayer(TCP):
         tcp_pkt = ip_pkt.getlayer(TCP)
         tcp_destination = tcp_pkt.dport
@@ -17,7 +19,12 @@ for pkt in packet:
             session_number = len(session_ports)
             session_ports.append(tcp_destination)
 
-        print(tcp_destination, tcp_payload_size, session_number)
+        if (tcp_payload_size > 0):
+            print("IP: Src {}, Dst {}".format(ip_pkt.src, ip_pkt.dst))
+            print("TCP: Dest {}, Size {}, Session # {}".format(
+                tcp_destination, tcp_payload_size, session_number))
+            print(tcp_pkt.payload)
+            print("\n")
 
     if ip_pkt.haslayer(UDP):
         udp_pkt = ip_pkt.getlayer(UDP)
@@ -28,8 +35,11 @@ for pkt in packet:
         else:
             session_number = len(session_ports)
             session_ports.append(udp_destination)
-        print(udp_destination, udp_payload_size,
-              session_number)
-        print(udp_pkt.payload)
+        if (udp_payload_size > 0):
+            print("IP: Src {}, Dst {}".format(ip_pkt.src, ip_pkt.dst))
+            print("UDP: Dest {}, Size {}, Session # {}".format(udp_destination, udp_payload_size,
+                                                               session_number))
+            print(udp_pkt.payload)
+            print("\n")
 
 print(session_ports)
