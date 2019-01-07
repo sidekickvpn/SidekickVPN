@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 # Default values
 net_name="wg0"

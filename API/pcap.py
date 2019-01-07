@@ -2,7 +2,7 @@ import sys
 from scapy.all import rdpcap, IP, TCP, UDP
 
 session_ports = []
-packet = rdpcap("logs/{}_packets.pcap".format(sys.argv[1]))
+packet = rdpcap("{}".format(sys.argv[1]))
 
 for pkt in packet:
     ip_pkt = pkt.getlayer(IP)
@@ -10,9 +10,15 @@ for pkt in packet:
         continue
     # print("TCP? {}, UDP? {}".format(ip_pkt.haslayer(TCP), ip_pkt.haslayer(UDP)))
     if ip_pkt.haslayer(TCP):
+
         tcp_pkt = ip_pkt.getlayer(TCP)
         tcp_destination = tcp_pkt.dport
         tcp_payload_size = len(tcp_pkt.payload)
+
+        # Ignore SSH
+        if tcp_destination == 22 or tcp_destination == 55458:
+            continue
+
         if tcp_destination in session_ports:
             session_number = session_ports.index(tcp_destination)
         else:

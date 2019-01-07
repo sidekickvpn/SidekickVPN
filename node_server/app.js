@@ -11,13 +11,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // EJS View Engine (Will be removed once frontend implemented)
 app.set('view engine', 'ejs');
 
-// Home Route
+// @route GET /
+// @desc Home Route
 app.get('/', (req, res) => res.send('Welcome'));
 
-// Add client form
-app.get('/client/add', (req, res) => res.render('add'));
-
-// Get public key
+// @route GET /config
+// @desc Get public key
 app.get('/config', (req, res) => {
   const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
   exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
@@ -31,7 +30,13 @@ app.get('/config', (req, res) => {
   });
 });
 
-// Get peer info
+// @route GET /client/add
+// @desc Add client form
+app.get('/client/add', (req, res) => res.render('add'));
+
+// @route GET /client/:public_key
+// @param public_key - public key for the client
+// @desc Get peer info
 app.get('/client/:public_key', (req, res) => {
   const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
   const { public_key } = req.params;
@@ -62,7 +67,8 @@ app.get('/client/:public_key', (req, res) => {
   });
 });
 
-// Add peer to server
+// @route POST /client
+// @desc Add peer to server
 app.post('/client', (req, res) => {
   const { public_key, vpn_ip } = req.body;
   const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
@@ -80,7 +86,8 @@ app.post('/client', (req, res) => {
   );
 });
 
-// Remove peer from server
+// @route DELETE /client
+// @desc Remove peer from server
 app.delete('/client', (req, res) => {
   const { public_key } = req.body;
   const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
