@@ -3,6 +3,9 @@ from subprocess import call
 from scapy.all import sniff
 import requests
 
+from API import API
+
+
 # Incoming encrypted traffic from clients: udp and port 51820
 # Outgoing unencrypted traffic to internet: tcp
 # Outgoing encrypted traffic to clients: udp and src port 51820
@@ -27,7 +30,6 @@ import requests
 # sniff(filter="udp and port 51820", iface=sys.argv[1], prn=lambda x: x.sprintf(
 # "{IP:%IP.src% -> %IP.dst%\n}{Raw:%Raw.load%\n}"))
 
-from API import API
 
 client = API()
 client.get_client("8Wv1tJv9fZYmxEaBPaAJUXd65PzVpFTCA2kYBPLKZzQ=")
