@@ -4,6 +4,7 @@ from scapy.all import sniff
 import requests
 
 from API import API
+from pcap import parse_packet
 
 
 # Incoming encrypted traffic from clients: udp and port 51820
@@ -31,9 +32,18 @@ from API import API
 # "{IP:%IP.src% -> %IP.dst%\n}{Raw:%Raw.load%\n}"))
 
 
-client = API()
-client.get_client("8Wv1tJv9fZYmxEaBPaAJUXd65PzVpFTCA2kYBPLKZzQ=")
+with open("logs.txt", "w+") as logs:
+    def append_log(pkt):
+        # logs.write(str(pkt))
+        parse_packet(pkt, logs)
+        logs.write('\n\n')
 
-results = client.read_packets(12)
+    client = API()
+    client.set_client("8Wv1tJv9fZYmxEaBPaAJUXd65PzVpFTCA2kYBPLKZzQ=")
+    client.set_callback(append_log)
 
-print(results)
+    results = client.read_packets(12)
+
+    print(results)
+
+logs.close()
