@@ -33,7 +33,6 @@ def parse_packet(pkt, out=sys.stdout):
             print("TCP: Dest {}, Size {}, Session # {}".format(
                 tcp_destination, tcp_payload_size, session_number), file=out)
             print(tcp_pkt.payload, file=out)
-            print("\n", file=out)
 
     if ip_pkt.haslayer(UDP):
         udp_pkt = ip_pkt.getlayer(UDP)
@@ -50,6 +49,5 @@ def parse_packet(pkt, out=sys.stdout):
             print("UDP: Dest {}, Size {}, Session # {}".format(udp_destination, udp_payload_size,
                                                                session_number), file=out)
             print(udp_pkt.payload, file=out)
-            print("\n", file=out)
 
     print(session_ports, file=out)

@@ -1,9 +1,11 @@
 import sys
 from subprocess import call
+from multiprocessing.pool import ThreadPool
 from scapy.all import sniff
 import requests
+import time
 
-from API import API
+from API import API, match_packets
 from pcap import parse_packet
 
 
@@ -31,19 +33,25 @@ from pcap import parse_packet
 # sniff(filter="udp and port 51820", iface=sys.argv[1], prn=lambda x: x.sprintf(
 # "{IP:%IP.src% -> %IP.dst%\n}{Raw:%Raw.load%\n}"))
 
+# pool = ThreadPool(processes=2)
+try:
+    # with open("logs.txt", "w+") as logs:
+    # def append_log(pkt):
+    #     # logs.write(str(pkt))
+    #     parse_packet(pkt, logs)
+    #     logs.write('\n\n')
 
-with open("logs.txt", "w+") as logs:
-    def append_log(pkt):
-        # logs.write(str(pkt))
-        parse_packet(pkt, logs)
-        logs.write('\n\n')
+    def parse(pkt):
+        parse_packet(pkt)
+        print("\n")
 
     client = API()
     client.set_client("8Wv1tJv9fZYmxEaBPaAJUXd65PzVpFTCA2kYBPLKZzQ=")
-    client.set_callback(append_log)
+    client.set_callback(match_packets)
 
-    results = client.read_packets(12)
+    # results.append(pool.apply_async(client.read_encrypted))
+    # results.append(pool.apply_async(client.read_unencrypted))
+    client.read_packets()
 
-    print(results)
-
-logs.close()
+except KeyboardInterrupt:
+    print("Exiting gracefully...")
