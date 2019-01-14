@@ -19,14 +19,23 @@ app.get('/', (req, res) => res.send('Welcome'));
 // @desc Get public key
 app.get('/config', (req, res) => {
   const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
-  exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
+  exec(`hostname -I`, (err, stdout, stderr) => {
     if (err) {
       console.error(err);
       res.status(500).json({ Error: err });
       return;
     }
-    const public_key = stdout.slice(0, stdout.length - 1);
-    res.status(200).json({ public_key });
+    const local_ip = stdout.split(' ')[0];
+
+    exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ Error: err });
+        return;
+      }
+      const public_key = stdout.slice(0, stdout.length - 1);
+      res.status(200).json({ local_ip, public_key });
+    });
   });
 });
 
