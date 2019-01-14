@@ -1,57 +1,16 @@
 import requests
-from scapy.all import sniff, UDP, TCP
+from scapy.all import sniff, UDP, TCP, wrpcap, rdpcap
 from multiprocessing.pool import ThreadPool
-import queue
 from pcap import parse_packet
 import io
-
-
-def capture_packet(pkt):
-    print("Packet {}".format(pkt))
-
-
-def match_packets(backlog_queue):
-    def get_packet(pkt):
-        if pkt.haslayer(UDP):
-            backlog_queue.put(pkt)
-        elif pkt.haslayer(TCP):
-            if not backlog_queue.empty():
-                udp = backlog_queue.get()
-                summary = io.StringIO()
-                parse_packet(udp, summary)
-                print("Encrypted: {}".format(summary.getvalue()))
-
-                summary = io.StringIO()
-                parse_packet(pkt, summary)
-                print("Unencrypted: {}".format(summary.getvalue()))
-            else:
-                summary = io.StringIO()
-                parse_packet(pkt, summary)
-                print("Standalone TCP: {}".format(summary.getvalue()))
-
-    return get_packet
-
-
-def sniff_packets(filters, iface, callback):
-    """
-    Monitor traffic with given filter on given interface for the given amount of packet counts.
-    When a packet is received, the callback function is called.
-    """
-    print("Sniffing {}".format(iface))
-
-    backlog_queue = queue.Queue()
-    pkts = sniff(filter=filters, iface=iface,
-                 prn=callback(backlog_queue))
-
-    print("finished sniffing on {}".format(iface))
-    print(pkts)
-    return pkts
 
 
 class API:
     def __init__(self):
         self.public_key = ""
-        self.callback = capture_packet
+        self.callback = self.capture_packet
+        self.pkt_stack = []
+        self.data = []
 
     def set_client(self, public_key):
         """ Set public key of clients """
@@ -61,40 +20,107 @@ class API:
         """ Set callback to call when sniffing packets """
         self.callback = callback
 
-    def read_packets(self):
+    def read_incoming_packets(self):
+        """
+        Monitor traffic with given filter on given interface for the given amount of packet counts.
+        When a packet is received, the callback function is called.
+        """
+        r = requests.get("http://localhost:5000/config")
+        local_ip = r.json()["local_ip"]
+
         r = requests.get(
-            'http://localhost:5000/client/{}'.format(self.public_key))
+            "http://localhost:5000/client/{}".format(self.public_key))
         endpoints = r.json()["endpoints"][:-6]
-        allowed_ips = r.json()["allowed_ips"][:-3]
 
-        pkts = sniff_packets("(udp and ( src {} and dst port 51820 )) or (( port not 22 ) and ( src {} or dst {} ))".format(
-            endpoints, allowed_ips, allowed_ips), "wgnet0", self.callback)
-
+        print("Sniffing started")
+        pkts = sniff(filter="((tcp and src {}) or (udp and src {})) and port not 22".format(
+            local_ip, endpoints), prn=self.callback())
+        # pkts = self.sniff_packets(
+        #     "((tcp and src 10.90.53.108) or (udp and src 10.90.53.137)) and port not 22")
+        print("Finished sniffing")
+        print(self.pkt_stack)
+        print(pkts)
         return pkts
 
-    def read_encrypted(self):
+    def capture_packet(self):
+        def get_packet(pkt):
+            self.pkt_stack.append(pkt)
+        return get_packet
+
+    def print_packets(self):
+        def get_packet(pkt):
+            if pkt.haslayer(UDP):
+                self.pkt_stack.append(pkt)
+
+            elif pkt.haslayer(TCP):
+                if len(self.pkt_stack) > 0:
+                    udp = self.pkt_stack.pop()
+                    summary = io.StringIO()
+                    parse_packet(udp, summary)
+                    print("Encrypted: {}".format(summary.getvalue()))
+                    # pkt.show()
+
+                    summary = io.StringIO()
+                    parse_packet(pkt, summary)
+                    print("Unencrypted: {}".format(summary.getvalue()))
+                    # pkt.show()
+                else:
+                    summary = io.StringIO()
+                    parse_packet(pkt, summary)
+                    print("Standalone TCP: {}".format(summary.getvalue()))
+                    # pkt.show()
+        return get_packet
+
+    def save_incoming_packets(self, filename):
+        """
+        Similar to read_incoming_packets, but saves to pcap file
+        """
+        r = requests.get("http://localhost:5000/config")
+        local_ip = r.json()["local_ip"]
+
         r = requests.get(
-            'http://localhost:5000/client/{}'.format(self.public_key))
+            "http://localhost:5000/client/{}".format(self.public_key))
         endpoints = r.json()["endpoints"][:-6]
-        # encrypted_pkts = pool.apply_async(
-        #     sniff_packets, ("udp and ( src {} and dst port 51820 )".format(endpoints), "wlan0", count, self.callback))
-        pkts = sniff_packets("udp and ( src {} and dst port 51820 )".format(
-            endpoints), "wlan0", self.callback)
 
+        print("Sniffing started")
+        pkts = sniff(filter="((tcp and src {}) or (udp and src {})) and port not 22".format(
+            local_ip, endpoints))
+
+        wrpcap(filename, pkts)
+        print("Finished sniffing")
+        print(self.pkt_stack)
+        print(pkts)
         return pkts
 
-    def read_unencrypted(self):
-        # pool = ThreadPool(processes=2)
-        r = requests.get(
-            'http://localhost:5000/client/{}'.format(self.public_key))
-        allowed_ips = r.json()["allowed_ips"][:-3]
+    def parse_incoming_pcap(self, filename):
+        """
+        Reads pcap file created by save_incoming_packets and parses similar to read_incoming_packets 
+        """
+        pkts = rdpcap(filename)
+        for pkt in pkts:
+            self.callback()(pkt)
 
-        # unencrypted_pkts = pool.apply_async(
-        #     sniff_packets, ("( port not 22 ) and ( src {} or dst {} )".format(allowed_ips, allowed_ips), "wgnet0", count, self.callback))
-        pkts = sniff_packets("( port not 22 ) and ( src {} or dst {} )".format(
-            allowed_ips, allowed_ips), "wgnet0", self.callback)
+    def collect_incoming_pkts(self):
+        """
+        Callback function for read_incoming_pkts and parse_incoming_pcap.
 
-        # pool.close()
-        # pool.join()
-        # return (encrypted_pkts.get(), unencrypted_pkts.get())
-        return pkts
+        Saves pairs of encrypted to unencrypted packet of a list of dicts in self.data
+
+        Example: [{encrypted: "...", unencrypted: "..."}, ...]
+        """
+        def get_packet(pkt):
+            if pkt.haslayer(UDP):
+                self.pkt_stack.append(pkt)
+
+            elif pkt.haslayer(TCP):
+                pair = {}
+                if len(self.pkt_stack) > 0:
+                    udp = self.pkt_stack.pop()
+                    pair["encrypyted"] = udp
+                    pair["unencrypyted"] = pkt
+                else:
+                    pair["encrypyted"] = None
+                    pair["unencrypyted"] = pkt
+                self.data.append(pair)
+
+        return get_packet
