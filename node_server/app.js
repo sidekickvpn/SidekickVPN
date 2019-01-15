@@ -1,6 +1,7 @@
 const express = require('express');
 const exec = require('child_process').exec;
 const bodyParser = require('body-parser');
+const expressLayouts = require('express-ejs-layouts');
 
 const app = express();
 
@@ -10,31 +11,27 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // EJS View Engine (Will be removed once frontend implemented)
 app.set('view engine', 'ejs');
+app.use(expressLayouts);
 
 // @route GET /
 // @desc Home Route
-app.get('/', (req, res) => res.send('Welcome'));
+app.get('/', (req, res) => res.render('welcome'));
 
 // @route GET /config
 // @desc Get public key
 app.get('/config', (req, res) => {
   const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
-  exec(`hostname -I`, (err, stdout, stderr) => {
+
+  exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
     if (err) {
       console.error(err);
       res.status(500).json({ Error: err });
       return;
     }
-    const local_ip = stdout.split(' ')[0];
-
-    exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ Error: err });
-        return;
-      }
-      const public_key = stdout.slice(0, stdout.length - 1);
-      res.status(200).json({ local_ip, public_key });
+    const public_key = stdout.slice(0, stdout.length - 1);
+    // res.status(200).json({ public_key });
+    res.render('public', {
+      public_key
     });
   });
 });

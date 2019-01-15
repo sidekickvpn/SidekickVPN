@@ -155,6 +155,7 @@ class API:
         for pkt in pkts:
             self.callback()(pkt)
 
+    def get_packets(self):
         for pair in self.data:
             yield (pair.encrypted, pair.unencrypted)
 
