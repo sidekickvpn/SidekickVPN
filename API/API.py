@@ -155,6 +155,9 @@ class API:
         for pkt in pkts:
             self.callback()(pkt)
 
+        for pair in self.data:
+            yield (pair.encrypted, pair.unencrypted)
+
     def collect_incoming_pkts(self):
         """
         Callback function for read_incoming_pkts and parse_incoming_pcap.
