@@ -126,30 +126,30 @@ class API:
                     # pkt.show()
         return get_packet
 
-    def save_incoming_packets(self, filename):
+    # def save_incoming_packets(self, filename):
+    #     """
+    #     Similar to read_incoming_packets, but saves to pcap file
+    #     """
+    #     r = requests.get("http://localhost:5000/config")
+    #     local_ip = r.json()["local_ip"]
+
+    #     r = requests.get(
+    #         "http://localhost:5000/client/{}".format(self.public_key))
+    #     endpoints = r.json()["endpoints"][:-6]
+
+    #     print("Sniffing started")
+    #     pkts = sniff(filter="((tcp and src {}) or (udp and src {})) and port not 22".format(
+    #         local_ip, endpoints))
+
+    #     wrpcap(filename, pkts)
+    #     print("Finished sniffing")
+    #     print(self.pkt_stack)
+    #     print(pkts)
+    #     return pkts
+
+    def parse_pcap(self, filename):
         """
-        Similar to read_incoming_packets, but saves to pcap file
-        """
-        r = requests.get("http://localhost:5000/config")
-        local_ip = r.json()["local_ip"]
-
-        r = requests.get(
-            "http://localhost:5000/client/{}".format(self.public_key))
-        endpoints = r.json()["endpoints"][:-6]
-
-        print("Sniffing started")
-        pkts = sniff(filter="((tcp and src {}) or (udp and src {})) and port not 22".format(
-            local_ip, endpoints))
-
-        wrpcap(filename, pkts)
-        print("Finished sniffing")
-        print(self.pkt_stack)
-        print(pkts)
-        return pkts
-
-    def parse_incoming_pcap(self, filename):
-        """
-        Reads pcap file created by save_incoming_packets and parses similar to read_incoming_packets 
+        Reads pcap file created by read_packets and parses
         """
         pkts = rdpcap(filename)
         for pkt in pkts:
@@ -173,6 +173,31 @@ class API:
                     udp = self.pkt_stack.pop()
                     pair["encrypyted"] = udp
                     pair["unencrypyted"] = pkt
+                else:
+                    pair["encrypyted"] = None
+                    pair["unencrypyted"] = pkt
+                self.data.append(pair)
+
+        return get_packet
+
+    def collect_outgoing_pkts(self):
+        """
+        Callback function for read_incoming_pkts and parse_incoming_pcap.
+
+        Saves pairs of encrypted to unencrypted packet of a list of dicts in self.data
+
+        Example: [{encrypted: "...", unencrypted: "..."}, ...]
+        """
+        def get_packet(pkt):
+            if pkt.haslayer(TCP):
+                self.pkt_stack.append(pkt)
+
+            elif pkt.haslayer(UDP):
+                pair = {}
+                if len(self.pkt_stack) > 0:
+                    tcp = self.pkt_stack.pop()
+                    pair["unencrypyted"] = tcp
+                    pair["encrypyted"] = pkt
                 else:
                     pair["encrypyted"] = None
                     pair["unencrypyted"] = pkt
