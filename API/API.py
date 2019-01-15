@@ -1,8 +1,11 @@
-import requests
-from scapy.all import sniff, UDP, TCP, wrpcap, rdpcap
-from multiprocessing.pool import ThreadPool
-from pcap import parse_packet
 import io
+import socket
+from multiprocessing.pool import ThreadPool
+
+from scapy.all import TCP, UDP, rdpcap, sniff, wrpcap
+
+import requests
+from pcap import parse_packet
 
 
 class API:
@@ -12,6 +15,11 @@ class API:
         self.pkt_stack = []
         self.data = []
 
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        self.local_ip = s.getsockname()[0]
+        s.close()
+
     def set_client(self, public_key):
         """ Set public key of clients """
         self.public_key = public_key
@@ -20,25 +28,46 @@ class API:
         """ Set callback to call when sniffing packets """
         self.callback = callback
 
-    def read_incoming_packets(self):
+    def read_packets(self, mode="i", out="r", filename="output.pcap"):
         """
-        Monitor traffic with given filter on given interface for the given amount of packet counts.
+        Monitor traffic with given filter on given interface.
         When a packet is received, the callback function is called.
-        """
-        r = requests.get("http://localhost:5000/config")
-        local_ip = r.json()["local_ip"]
 
+        Arg: mode - Incoming vs. Outgoing traffic
+            For incoming use 'i', 'in', or 'incoming'
+            For outgoing use 'o', 'out', or 'outgoing'
+
+        Arg: out - How to output the results (read real-time or save to file)
+            For reading use 'r' or don't give arguement
+            For saving use 's'
+
+        Arg: filname - Name of output file if saving sniffed packets
+        """
+        # r = requests.get("http://localhost:5000/config")
+        # local_ip = r.json()["local_ip"]
         r = requests.get(
             "http://localhost:5000/client/{}".format(self.public_key))
         endpoints = r.json()["endpoints"][:-6]
 
         print("Sniffing started")
-        pkts = sniff(filter="((tcp and src {}) or (udp and src {})) and port not 22".format(
-            local_ip, endpoints), prn=self.callback())
+
+        sniff_filter = ""
+        if mode == "i" or mode == "in" or mode == "incoming":
+            sniff_filter = "((tcp and src {}) or (udp and src {})) and port not 22".format(
+                self.local_ip, endpoints)
+        elif mode == "o" or mode == "out" or mode == "outgoing":
+            sniff_filter = "((tcp and dst {}) or (udp and dst {})) and port not 22".format(
+                self.local_ip, endpoints)
+
+        pkts = sniff(filter=sniff_filter, prn=self.callback())
         # pkts = self.sniff_packets(
-        #     "((tcp and src 10.90.53.108) or (udp and src 10.90.53.137)) and port not 22")
+        #     "((tcp and src 10.90.10.100) or (udp and src 10.42.0.1)) and port not 22")
+
+        if out == "s":
+            wrpcap(filename, pkts)
+
         print("Finished sniffing")
-        print(self.pkt_stack)
+        # print(self.pkt_stack)
         print(pkts)
         return pkts
 
@@ -47,7 +76,7 @@ class API:
             self.pkt_stack.append(pkt)
         return get_packet
 
-    def print_packets(self):
+    def print_incoming_packets(self):
         def get_packet(pkt):
             if pkt.haslayer(UDP):
                 self.pkt_stack.append(pkt)
@@ -63,11 +92,37 @@ class API:
                     summary = io.StringIO()
                     parse_packet(pkt, summary)
                     print("Unencrypted: {}".format(summary.getvalue()))
+                    print("-" * 20)
                     # pkt.show()
                 else:
                     summary = io.StringIO()
                     parse_packet(pkt, summary)
                     print("Standalone TCP: {}".format(summary.getvalue()))
+                    # pkt.show()
+        return get_packet
+
+    def print_outgoing_packets(self):
+        def get_packet(pkt):
+            if pkt.haslayer(TCP):
+                self.pkt_stack.append(pkt)
+
+            elif pkt.haslayer(UDP):
+                if len(self.pkt_stack) > 0:
+                    tcp = self.pkt_stack.pop()
+                    summary = io.StringIO()
+                    parse_packet(tcp, summary)
+                    print("Unencrypted: {}".format(summary.getvalue()))
+                    # pkt.show()
+
+                    summary = io.StringIO()
+                    parse_packet(pkt, summary)
+                    print("Encrypted: {}".format(summary.getvalue()))
+                    print("-" * 20)
+                    # pkt.show()
+                else:
+                    summary = io.StringIO()
+                    parse_packet(pkt, summary)
+                    print("Standalone UDP: {}".format(summary.getvalue()))
                     # pkt.show()
         return get_packet
 
