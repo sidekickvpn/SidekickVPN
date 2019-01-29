@@ -65,7 +65,7 @@ class API:
         """
         peer_info = get_peer_info(self.public_key)
 
-        endpoints = peer_info["endpoints"][:-6]
+        endpoints = peer_info["endpoints"].split(":")[0]
         print("endpoints: {}".format(endpoints))
         print("local IP: {}".format(self.local_ip))
         print("Sniffing started")
