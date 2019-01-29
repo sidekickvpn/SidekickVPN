@@ -3,6 +3,7 @@
 # Default values
 net_name="wg0"
 server_port=51820
+server_backend_port=5000
 
 usage() {
   echo "Usage: $0 -c <client vpn ip> -p <server public key> -i <server public ip> [-n <network name>]"
@@ -79,3 +80,9 @@ AllowedIPs = 0.0.0.0/0
 Endpoint = ${server_ip}:${server_port}
 PersistentKeepalive = 25
 EOF
+
+# Register client with server
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{ "public_key": "${publickey}", "vpn_ip": "${client_ip}" }' \
+  "${server_ip}:${server_backend_port}/client"

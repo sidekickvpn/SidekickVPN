@@ -53,7 +53,6 @@ app.get('/client/:public_key', (req, res) => {
       return;
     }
     const peers = stdout.split('\n').map(peer => peer.split('\t'));
-    peers.pop();
 
     const peer = peers.find(peer => peer[0] === public_key);
     if (peer) {

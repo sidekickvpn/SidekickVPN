@@ -47,7 +47,7 @@ class API:
 
         return get_packet
 
-    def read_packets(self, mode="i", out="r", filename="output.pcap"):
+    def read_packets(self, mode="res", out="r", filename="output.pcap"):
         """
         Monitor traffic with given filter on given interface.
         When a packet is received, the callback function is called.

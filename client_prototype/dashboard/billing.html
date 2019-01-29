@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <title>VPN Traffic Analysis | Billing</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <!-- Navbar start -->
+    <nav>
+      <div class="nav-wrapper blue darken-4">
+        <a href="#!" class="brand-logo center">VPN Traffic Analysis</a>
+        <a href="#" data-target="mobile-demo" class="sidenav-trigger"
+          ><i class="material-icons">menu</i></a
+        >
+        <ul class="left hide-on-med-and-down">
+          <li><a href="/">Home</a></li>
+        </ul>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="/login.html">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <ul class="sidenav" id="mobile-demo">
+      <li>
+        <a href="/"><i class="tiny material-icons">home</i></a>
+      </li>
+      <li><a href="/login.html">Logout</a></li>
+    </ul>
+    <!-- Navbar end -->
+
+    <div class="row">
+      <div class="col m3">
+        <div class="collection">
+          <a href="./summary.html" class="collection-item">
+            <i class="material-icons inline-icon">assessment</i> Summary
+          </a>
+          <a href="./devices.html" class="collection-item">
+            <i class="material-icons inline-icon">devices_other</i> Devices
+          </a>
+          <a href="./reports.html" class="collection-item">
+            <i class="material-icons inline-icon">feedback</i> Reports
+          </a>
+          <a href="./billing.html" class="collection-item">
+            <i class="material-icons inline-icon">receipt</i> Billing
+          </a>
+          <a href="./subscription.html" class="collection-item">
+            <i class="material-icons inline-icon">shopping_cart</i> Subscription
+          </a>
+        </div>
+      </div>
+      <div class="col m9">
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">
+              <i class="material-icons inline-icon">receipt</i> Billing
+            </span>
+
+            <h5>Payment Methods</h5>
+            <ul class="collection">
+              <li class="collection-item">
+                <i class="material-icons inline-icon">payment</i> Mastercard -
+                XXXX XXXX XXX 1234
+              </li>
+              <li class="collection-item">
+                <i class="material-icons inline-icon">payment</i> Visa - XXXX
+                XXXX XXXX 5678
+              </li>
+            </ul>
+            <button class="waves-effect green btn">
+              <i class="material-icons inline-icon">add</i> Add Payment Method
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      M.AutoInit();
+    </script>
+  </body>
+</html>
