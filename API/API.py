@@ -1,11 +1,13 @@
 import io
 import socket
+import pika
 from multiprocessing.pool import ThreadPool
 
 from scapy.all import TCP, UDP, rdpcap, sniff, wrpcap
 
 from pcap import parse_packet
 from query_wg import get_peer_info
+from serialize_pkt import SerializePkt
 
 """ 
 Definitions:
@@ -29,6 +31,13 @@ class API:
         self.local_ip = s.getsockname()[0]
         s.close()
 
+        # Setup RabbitMQ Connection
+        connection = pika.BlockingConnection(
+            pika.ConnectionParameters(host='localhost')
+        )
+        self.channel = connection.channel()
+        self.channel.queue_declare(queue='encrypted-pkts')
+
     def set_client(self, public_key):
         """ Set public key of clients """
         self.public_key = public_key
@@ -46,6 +55,25 @@ class API:
             print("-" * 20)
 
         return get_packet
+
+    def publish_pkt(self):
+        def get_packet(pkt):
+            serialized_pkt = SerializePkt(pkt)
+            self.channel.basic_publish(exchange='',
+                                       routing_key='encrypted-pkts',
+                                       body=serialized_pkt)
+        return get_packet
+
+    def read_plain_pkts(self):
+        """
+        Sniff on wireguard interface for plain text packets, then publish to RabbitMQ queue
+        """
+
+        pkts = sniff(iface="wgnet0",
+                     prn=self.publish_pkt)
+
+        print(pkts)
+        return pkts
 
     def read_packets(self, mode="res", out="r", filename="output.pcap"):
         """

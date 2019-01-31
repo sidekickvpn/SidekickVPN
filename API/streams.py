@@ -16,8 +16,8 @@ try:
 
     print("Client set to: {}".format(client.public_key))
 
-    client.set_callback(client.print_response_packets)
-    client.read_packets(mode="response")
+    # client.set_callback(client.print_response_packets)
+    # client.read_packets(mode="response")
     # client.save_incoming_packets("pkts.pcap")
     # client.parse_incoming_pcap("pkts.pcap")
 
@@ -32,6 +32,10 @@ try:
 
     # for encrypted, unencrypted in client.get_packets():
     #     print(encrypted, unencrypted)
+
+    # Use RabbitMQ to publish packets to Queue
+    client.set_callback(client.publish_pkt)
+    client.read_plain_pkts()
 
 
 except KeyboardInterrupt:
