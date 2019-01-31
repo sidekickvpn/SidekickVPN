@@ -70,7 +70,7 @@ class API:
         """
 
         pkts = sniff(iface="wgnet0",
-                     prn=self.publish_pkt)
+                     prn=self.publish_pkt())
 
         print(pkts)
         return pkts
