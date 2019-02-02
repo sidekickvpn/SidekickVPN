@@ -61,7 +61,7 @@ class API:
             serialized_pkt = SerializePkt(pkt)
             self.channel.basic_publish(exchange='',
                                        routing_key='encrypted-pkts',
-                                       body=serialized_pkt)
+                                       body=serialized_pkt.contents)
         return get_packet
 
     def read_plain_pkts(self):
