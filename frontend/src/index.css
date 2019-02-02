@@ -1,0 +1,7 @@
+.inline-icon {
+  vertical-align: bottom;
+}
+
+.active {
+  background: rgba(0, 0, 0, 0.1);
+}
