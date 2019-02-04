@@ -13,9 +13,9 @@ import Register from './components/auth/Register';
 import { auth } from './firebase';
 import { getUser } from './actions/auth';
 import PrivateRoute from './components/common/PrivateRoute';
-import Dashboard from './components/Dashboard';
+import Dashboard from './components/dashboard/Dashboard';
 
-class App extends Component {
+class App extends Component<any, any> {
   async componentDidMount() {
     // M.AutoInit();
     await auth.onAuthStateChanged(
@@ -29,7 +29,7 @@ class App extends Component {
         <Router>
           <div>
             <Navbar />
-            <div className="container">
+            <div className="container mt-3">
               <Switch>
                 <Route exact path="/" component={Landing} />
                 <PrivateRoute exact path="/dashboard" component={Dashboard} />

@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { AppState } from '../../reducers';
@@ -14,52 +14,51 @@ class Navbar extends Component<NavbarProps> {
   render() {
     const authLinks = (
       <Fragment>
-        <li>
-          <NavLink to="/dashboard">Dashboard</NavLink>
-        </li>
-        <li>
-          <a onClick={async () => await this.props.logout()}>Logout</a>
-        </li>
+        <NavLink className="nav-item nav-link" to="/dashboard">
+          Dashboard
+        </NavLink>
+        <a
+          className="nav-item nav-link"
+          onClick={async () => await this.props.logout()}
+        >
+          Logout
+        </a>
       </Fragment>
     );
 
     const guestLinks = (
       <Fragment>
-        <li>
-          <NavLink to="/login">Login</NavLink>
-        </li>
-        <li>
-          <NavLink to="/register">Register</NavLink>
-        </li>
+        <NavLink className="nav-item nav-link" to="/login">
+          Login
+        </NavLink>
+        <NavLink className="nav-item nav-link" to="/register">
+          Register
+        </NavLink>
       </Fragment>
     );
 
     return (
-      <div>
-        <nav>
-          <div className="nav-wrapper blue darken-4">
-            <a href="#!" className="brand-logo center">
-              VPN Traffic Analysis
-            </a>
-            <a href="#" data-target="mobile-demo" className="sidenav-trigger">
-              <i className="material-icons">menu</i>
-            </a>
-            <ul className="left hide-on-med-and-down">
-              <li>
-                <NavLink exact to="/">
-                  Home
-                </NavLink>
-              </li>
-            </ul>
-            <ul className="right hide-on-med-and-down">
+      <div className="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div className="container">
+          <Link to="/" className="navbar-brand">
+            VPN Traffic Analysis
+          </Link>
+          <button
+            className="navbar-toggler"
+            data-toggle="collapse"
+            data-target="#navbarResponsive"
+            aria-controls="navbarResponsive"
+            aria-expanded="false"
+            aria-label="Toggle nagivation"
+          >
+            <span className="navbar-toggler-icon" />
+          </button>
+          <div className="collapse navbar-collapse" id="navbarResponsive">
+            <div className="navbar-nav">
               {this.props.isAuthenticated ? authLinks : guestLinks}
-            </ul>
+            </div>
           </div>
-        </nav>
-
-        <ul className="sidenav" id="mobile-demo">
-          {this.props.isAuthenticated ? authLinks : guestLinks}
-        </ul>
+        </div>
       </div>
     );
   }
@@ -71,5 +70,9 @@ const mapStateToProps = (state: AppState) => ({
 
 export default connect(
   mapStateToProps,
-  { logout }
+  { logout },
+  null,
+  {
+    pure: false
+  }
 )(Navbar);

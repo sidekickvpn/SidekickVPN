@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { auth, githubAuthProvider } from '../../firebase';
 import { connect } from 'react-redux';
 import { login } from '../../actions/auth';
-import { AuthActions } from '../../actions';
-import { Dispatch } from 'redux';
 import { Redirect } from 'react-router';
 
 interface LoginProps {
@@ -11,7 +9,7 @@ interface LoginProps {
   isAuthenticated: boolean;
 }
 
-class Login extends Component<LoginProps, any> {
+class Login extends Component<LoginProps> {
   state = {
     email: '',
     password: ''
@@ -32,58 +30,68 @@ class Login extends Component<LoginProps, any> {
     }
     const { email, password } = this.state;
     return (
-      <div>
-        <div className="row">
-          <div className="col m6 offset-m3" style={{ marginTop: '2rem' }}>
-            <div className="card">
-              <div className="card-content">
-                <h3 className="center">Login</h3>
+      <div className="row">
+        <div className="col-md-6 offset-md-3">
+          <div className="card">
+            <div className="card-body">
+              <h3 className="card-title text-center">Login</h3>
+              <form onSubmit={this.onSubmit}>
                 <div className="row">
-                  <form className="col s12" onSubmit={this.onSubmit}>
-                    <div className="row">
-                      <div className="input-field col s12">
-                        <input
-                          id="email"
-                          name="email"
-                          type="email"
-                          className="validate"
-                          onChange={this.onChange}
-                          value={email}
-                        />
-                        <label htmlFor="email">Email</label>
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="input-field col s12">
-                        <input
-                          id="password"
-                          name="password"
-                          type="password"
-                          className="validate"
-                          onChange={this.onChange}
-                          value={password}
-                        />
-                        <label htmlFor="password">Password</label>
-                      </div>
-                    </div>
-                    <button className="waves-effect waves-light btn col s12 blue darken-2">
-                      Login
-                    </button>
-                  </form>
+                  <div className="form-group col-sm-12">
+                    <label>Email</label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      className="form-control"
+                      onChange={this.onChange}
+                      value={email}
+                    />
+                  </div>
                 </div>
                 <div className="row">
-                  <hr className="col s4 offset-s1" />
-                  <span className="col">OR</span>
-                  <hr className="col s4" />
+                  <div className="form-group col-sm-12">
+                    <label>Password</label>
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      className="form-control"
+                      onChange={this.onChange}
+                      value={password}
+                    />
+                  </div>
                 </div>
-                <div className="row">
-                  <button
-                    className="waves-effect btn black col s12"
-                    onClick={() => auth.signInWithPopup(githubAuthProvider)}
-                  >
-                    GitHub
-                  </button>
-                </div>
+                <button className="btn btn-block btn-primary">Login</button>
+              </form>
+              {/* <div className="row">
+                  <hr className="col" />
+                  <span className="col text-center mt-1 lead">
+                    Sign in With
+                  </span>
+                  <hr className="col" />
+                </div> */}
+              <div className="card-body">
+                <p className="text-center lead">Sign in With</p>
+                <button className="btn btn-block btn-danger mb-2">
+                  <i className="fab fa-google mr-2" />
+                  Google
+                </button>
+                <button className="btn btn-block btn-primary mb-2">
+                  <i className="fab fa-facebook mr-2" />
+                  Facebook
+                </button>
+                <button className="btn btn-block btn-info mb-2">
+                  <i className="fab fa-twitter mr-2" />
+                  Twitter
+                </button>
+                <button
+                  className="btn btn-block btn-dark"
+                  onClick={() => auth.signInWithPopup(githubAuthProvider)}
+                >
+                  <i className="fab fa-github mr-2" />
+                  GitHub
+                </button>
               </div>
             </div>
           </div>

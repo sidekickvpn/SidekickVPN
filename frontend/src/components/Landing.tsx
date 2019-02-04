@@ -3,9 +3,11 @@ import React from 'react';
 const landing = () => {
   return (
     <div className="card">
-      <div className="card-content">
-        <span className="card-title">Hello</span> Lorem ipsum dolor sit, amet
-        consectetur adipisicing elit. Aut, nemo.
+      <div className="card-body">
+        <h3 className="card-title">Landing</h3>
+        <p>
+          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut, nemo.
+        </p>
       </div>
     </div>
   );
