@@ -14,6 +14,7 @@ export const login = (
   dispatch: ThunkDispatch<AuthState, {}, AuthActions>
 ): Promise<void> => {
   try {
+    dispatch({ type: 'USER_LOADING' });
     const userCredential = await auth.signInWithEmailAndPassword(
       email,
       password

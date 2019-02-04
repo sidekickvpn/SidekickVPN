@@ -3,8 +3,8 @@ import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store';
 
-import M from 'materialize-css';
-import 'materialize-css/dist/css/materialize.min.css';
+// import M from 'materialize-css';
+// import 'materialize-css/dist/css/materialize.min.css';
 
 import Navbar from './components/layout/Navbar';
 import Landing from './components/Landing';
@@ -12,10 +12,12 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import { auth } from './firebase';
 import { getUser } from './actions/auth';
+import PrivateRoute from './components/common/PrivateRoute';
+import Dashboard from './components/Dashboard';
 
 class App extends Component {
   async componentDidMount() {
-    M.AutoInit();
+    // M.AutoInit();
     await auth.onAuthStateChanged(
       async user => await store.dispatch(getUser(user))
     );
@@ -30,6 +32,7 @@ class App extends Component {
             <div className="container">
               <Switch>
                 <Route exact path="/" component={Landing} />
+                <PrivateRoute exact path="/dashboard" component={Dashboard} />
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/register" component={Register} />
               </Switch>

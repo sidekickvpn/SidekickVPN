@@ -1,6 +1,10 @@
 import { Action } from 'redux';
 import { User } from 'firebase';
 
+export interface UserLoadingAction extends Action {
+  type: 'USER_LOADING';
+}
+
 export interface LoginSuccessAction extends Action {
   type: 'LOGIN_SUCCESS';
   user: User;
@@ -20,6 +24,7 @@ export interface GetUserAction extends Action {
 }
 
 export type AuthActions =
+  | UserLoadingAction
   | LoginSuccessAction
   | LoginFailureAction
   | LogoutAction

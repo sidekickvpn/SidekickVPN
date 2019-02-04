@@ -1,11 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import { NavLink } from 'react-router-dom';
-import { auth } from '../../firebase';
 import { connect } from 'react-redux';
 
 import { AppState } from '../../reducers';
 import { logout } from '../../actions/auth';
-import { LogoutAction } from '../../actions';
 
 interface NavbarProps {
   logout: () => Promise<void>;
@@ -17,6 +15,9 @@ class Navbar extends Component<NavbarProps> {
     const authLinks = (
       <Fragment>
         <li>
+          <NavLink to="/dashboard">Dashboard</NavLink>
+        </li>
+        <li>
           <a onClick={async () => await this.props.logout()}>Logout</a>
         </li>
       </Fragment>
@@ -25,14 +26,10 @@ class Navbar extends Component<NavbarProps> {
     const guestLinks = (
       <Fragment>
         <li>
-          <NavLink activeClassName="active" to="/login">
-            Login
-          </NavLink>
+          <NavLink to="/login">Login</NavLink>
         </li>
         <li>
-          <NavLink activeClassName="active" to="/register">
-            Register
-          </NavLink>
+          <NavLink to="/register">Register</NavLink>
         </li>
       </Fragment>
     );
@@ -49,7 +46,7 @@ class Navbar extends Component<NavbarProps> {
             </a>
             <ul className="left hide-on-med-and-down">
               <li>
-                <NavLink exact activeClassName="active" to="/">
+                <NavLink exact to="/">
                   Home
                 </NavLink>
               </li>
@@ -68,8 +65,8 @@ class Navbar extends Component<NavbarProps> {
   }
 }
 
-const mapStateToProps = ({ auth }: AppState) => ({
-  isAuthenticated: auth.isAuthenticated
+const mapStateToProps = (state: AppState) => ({
+  isAuthenticated: state.auth.isAuthenticated
 });
 
 export default connect(
