@@ -4,21 +4,28 @@ import { connect } from 'react-redux';
 
 import { AppState } from '../../reducers';
 import { logout } from '../../actions/auth';
+import { AuthState } from '../../reducers/auth';
 
 interface NavbarProps {
   logout: () => Promise<void>;
-  isAuthenticated: boolean;
+  auth: AuthState;
 }
 
 class Navbar extends Component<NavbarProps> {
   render() {
+    const { isAuthenticated, user } = this.props.auth;
     const authLinks = (
       <Fragment>
-        <NavLink className="nav-item nav-link" to="/dashboard">
-          Dashboard
-        </NavLink>
+        {user ? (
+          <Link className="nav-item nav-link" to="/dashboard">
+            <i className="fas fa-user inline-icon" />
+            {user.displayName}
+          </Link>
+        ) : (
+          ''
+        )}
         <a
-          className="nav-item nav-link"
+          className="nav-item nav-link pointer"
           onClick={async () => await this.props.logout()}
         >
           Logout
@@ -55,7 +62,18 @@ class Navbar extends Component<NavbarProps> {
           </button>
           <div className="collapse navbar-collapse" id="navbarResponsive">
             <div className="navbar-nav">
-              {this.props.isAuthenticated ? authLinks : guestLinks}
+              {isAuthenticated ? (
+                <NavLink className="nav-item nav-link" to="/dashboard">
+                  Dashboard
+                </NavLink>
+              ) : (
+                ''
+              )}
+            </div>
+            <div className="ml-auto d-lg-flex d-md-block">
+              <div className="navbar-nav">
+                {isAuthenticated ? authLinks : guestLinks}
+              </div>
             </div>
           </div>
         </div>
@@ -65,7 +83,7 @@ class Navbar extends Component<NavbarProps> {
 }
 
 const mapStateToProps = (state: AppState) => ({
-  isAuthenticated: state.auth.isAuthenticated
+  auth: state.auth
 });
 
 export default connect(

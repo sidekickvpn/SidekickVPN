@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { auth, githubAuthProvider } from '../../firebase';
+import { auth, githubAuthProvider, googleAuthProvider } from '../../firebase';
 import { connect } from 'react-redux';
 import { login } from '../../actions/auth';
 import { Redirect } from 'react-router';
@@ -73,7 +73,10 @@ class Login extends Component<LoginProps> {
                 </div> */}
               <div className="card-body">
                 <p className="text-center lead">Sign in With</p>
-                <button className="btn btn-block btn-danger mb-2">
+                <button
+                  className="btn btn-block btn-danger mb-2"
+                  onClick={() => auth.signInWithPopup(googleAuthProvider)}
+                >
                   <i className="fab fa-google mr-2" />
                   Google
                 </button>
