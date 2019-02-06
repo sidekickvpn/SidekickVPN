@@ -1,0 +1,11 @@
+.inline-icon {
+  margin-right: 0.5em;
+}
+
+.active {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.pointer {
+  cursor: pointer;
+}

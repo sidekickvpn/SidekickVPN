@@ -65,7 +65,7 @@ fi
 # Generate keys
 umask 077
 wg genkey | tee privatekey | wg pubkey > publickey
-publickey=$(cat publickey)
+public_key=$(cat publickey)
 
 # Genrate config file
 cat > $(echo $net_name).conf <<EOF
@@ -81,8 +81,18 @@ Endpoint = ${server_ip}:${server_port}
 PersistentKeepalive = 25
 EOF
 
+generate_post_data()
+{
+  cat <<EOF
+{
+  "public_key": "$public_key",
+  "vpn_ip": "$client_ip"  
+}
+EOF
+}
+
 # Register client with server
 curl --header "Content-Type: application/json" \
   --request POST \
-  --data '{ "public_key": "${publickey}", "vpn_ip": "${client_ip}" }' \
+  --data "$(generate_post_data)" \
   "${server_ip}:${server_backend_port}/client"
