@@ -36,10 +36,6 @@ app.get('/config', (req, res) => {
   });
 });
 
-// @route GET /client/add
-// @desc Add client form
-app.get('/client/add', (req, res) => res.render('add'));
-
 // @route GET /client/:public_key
 // @param public_key - public key for the client
 // @desc Get peer info
@@ -71,6 +67,10 @@ app.get('/client/:public_key', (req, res) => {
     }
   });
 });
+
+// @route GET /client/add
+// @desc Add client form
+app.get('/client/add', (req, res) => res.render('add'));
 
 // @route POST /client
 // @desc Add peer to server
