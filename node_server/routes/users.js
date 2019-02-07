@@ -1,0 +1,145 @@
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const keys = require('../config/keys');
+const passport = require('passport');
+
+const User = require('../models/User');
+
+// @route GET api/users/register
+// @desc Register User
+// @access Public
+router.post('/register', (req, res) => {
+  const { firstname, lastname, email, password, password2 } = req.body;
+  let errors = [];
+
+  // Check required fields
+  if (!firstname || !lastname || !email || !password || !password2) {
+    errors.push({ msg: 'Please fill in all fields' });
+  }
+
+  // Check passwords match
+  if (password !== password2) {
+    errors.push({ msg: 'Passwords do not match' });
+  }
+
+  // Check if password is long enough
+  if (password.length < 6) {
+    errors.push({ msg: 'Password should be at least 6 characters' });
+  }
+
+  if (errors.length > 0) {
+    res.status(400).json({
+      errors
+    });
+  } else {
+    // Validation passed
+    User.findOne({ email }).then(user => {
+      if (user) {
+        errors.push({ msg: 'Email is already registered' });
+        res.status(400).json({
+          errors
+        });
+      } else {
+        const newUser = new User({
+          firstname,
+          lastname,
+          email,
+          password
+        });
+
+        // Hash Password
+        bcrypt.genSalt(10, (err, salt) =>
+          bcrypt.hash(password, salt, (err, hash) => {
+            if (err) throw err;
+
+            // Set password to hashed
+            newUser.password = hash;
+
+            // Save user
+            newUser
+              .save()
+              .then(user => {
+                res.status(201).json(user);
+              })
+              .catch(err => console.log(err));
+          })
+        );
+      }
+    });
+  }
+});
+
+// @route GET api/users/login
+// @desc Login user
+// @access Public
+router.post('/login', (req, res, next) => {
+  const { email, password } = req.body;
+  let errors = {};
+
+  // Find user by email
+  User.findOne({
+    email
+  }).then(user => {
+    // Check for user
+    if (!user) {
+      errors.email = 'User not found';
+      return res.status(404).json(errors);
+    }
+
+    // Check password
+    bcrypt.compare(password, user.password).then(isMatch => {
+      if (isMatch) {
+        // User Matched
+        const payload = {
+          id: user.id,
+          name: `${user.firstname} ${user.lastname}`
+        };
+        jwt.sign(
+          payload,
+          keys.secretOrKey,
+          {
+            expiresIn: 3600
+          },
+          (err, token) => {
+            res.json({
+              success: true,
+              token: `Bearer ${token}`
+            });
+          }
+        );
+      } else {
+        errors.password = 'Password incorrect';
+        return res.status(400).json(errors);
+      }
+    });
+  });
+});
+
+// @route GET api/users/current
+// @desc Return current user
+// @access Private
+router.get(
+  '/current',
+  passport.authenticate('jwt', {
+    session: false
+  }),
+  (req, res) => {
+    const { id, firstname, lastname, email } = req.user;
+    res.json({
+      id,
+      firstname,
+      lastname,
+      email
+    });
+  }
+);
+
+// Logout Handle
+router.get('/logout', (req, res) => {
+  req.logout();
+  res.status(200).json({ msg: 'You have been logged out' });
+});
+
+module.exports = router;
