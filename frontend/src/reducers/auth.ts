@@ -1,51 +1,25 @@
-import {
-  LOGIN_SUCCESS,
-  LOGIN_FAIL,
-  LOGOUT_USER,
-  GET_USER,
-  USER_LOADING
-} from '../actions/types';
+import isEmpty from '../validation/is-empty';
 
-import { AuthActions } from '../actions/';
-import { User } from 'firebase';
+import { SET_CURRENT_USER } from '../actions/types';
+import { AuthActions, User } from '../actions';
 
 export interface AuthState {
-  user: User | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
+  user: User | null;
 }
 
 const initialState: AuthState = {
-  user: null,
   isAuthenticated: false,
-  isLoading: false
+  user: null
 };
 
-export default function(
-  state: AuthState = initialState,
-  action: AuthActions
-): AuthState {
+export default function(state = initialState, action: AuthActions) {
   switch (action.type) {
-    case USER_LOADING:
+    case SET_CURRENT_USER:
       return {
         ...state,
-        isLoading: true
-      };
-    case LOGIN_SUCCESS:
-    case GET_USER:
-      return {
-        ...state,
-        isAuthenticated: true,
-        user: action.user,
-        isLoading: false
-      };
-    case LOGIN_FAIL:
-    case LOGOUT_USER:
-      return {
-        ...state,
-        user: null,
-        isAuthenticated: false,
-        isLoading: false
+        isAuthenticated: !isEmpty(action.payload),
+        user: action.payload
       };
     default:
       return state;

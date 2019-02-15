@@ -3,11 +3,11 @@ import { NavLink, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { AppState } from '../../reducers';
-import { logout } from '../../actions/auth';
+import { logoutUser } from '../../actions/auth';
 import { AuthState } from '../../reducers/auth';
 
 interface NavbarProps {
-  logout: () => Promise<void>;
+  logoutUser: () => void;
   auth: AuthState;
 }
 
@@ -19,14 +19,14 @@ class Navbar extends Component<NavbarProps> {
         {user ? (
           <Link className="nav-item nav-link" to="/dashboard">
             <i className="fas fa-user inline-icon" />
-            {user.displayName}
+            {`${user.firstname}${user.lastname}`}
           </Link>
         ) : (
           ''
         )}
         <a
           className="nav-item nav-link pointer"
-          onClick={async () => await this.props.logout()}
+          onClick={async () => await this.props.logoutUser()}
         >
           Logout
         </a>
@@ -88,7 +88,7 @@ const mapStateToProps = (state: AppState) => ({
 
 export default connect(
   mapStateToProps,
-  { logout },
+  { logoutUser },
   null,
   {
     pure: false

@@ -26,31 +26,37 @@ app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());
 
 // EJS View Engine (Will be removed once frontend implemented)
-app.set('view engine', 'ejs');
-app.use(expressLayouts);
+// app.set('view engine', 'ejs');
+// app.use(expressLayouts);
 
 // @route GET /
 // @desc Home Route
-app.get('/', (req, res) => res.render('welcome'));
+// app.get('/', (req, res) => res.render('welcome'));
 
 // @route GET /config
 // @desc Get public key
-app.get('/api/config', (req, res) => {
-  const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
+// @access Private
+app.get(
+  '/api/config',
+  passport.authenticate('jwt', {
+    session: false
+  }),
+  (req, res) => {
+    const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
 
-  exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json({ Error: err });
-      return;
-    }
-    const public_key = stdout.slice(0, stdout.length - 1);
-    // res.status(200).json({ public_key });
-    res.render('public', {
-      public_key
+    exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ Error: err });
+        return;
+      }
+      const public_key = stdout.slice(0, stdout.length - 1);
+      res.status(200).json({
+        public_key
+      });
     });
-  });
-});
+  }
+);
 
 app.use('/api/clients', require('./routes/clients.js'));
 app.use('/api/users', require('./routes/users'));

@@ -11,17 +11,12 @@ const User = require('../models/User');
 // @desc Register User
 // @access Public
 router.post('/register', (req, res) => {
-  const { firstname, lastname, email, password, password2 } = req.body;
+  const { firstname, lastname, email, password } = req.body;
   let errors = [];
 
   // Check required fields
-  if (!firstname || !lastname || !email || !password || !password2) {
+  if (!firstname || !lastname || !email || !password) {
     errors.push({ msg: 'Please fill in all fields' });
-  }
-
-  // Check passwords match
-  if (password !== password2) {
-    errors.push({ msg: 'Passwords do not match' });
   }
 
   // Check if password is long enough

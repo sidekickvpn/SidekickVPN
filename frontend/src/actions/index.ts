@@ -1,31 +1,16 @@
 import { Action } from 'redux';
-import { User } from 'firebase';
+import { SetStateAction } from 'react';
 
-export interface UserLoadingAction extends Action {
-  type: 'USER_LOADING';
+export interface User {
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
 }
 
-export interface LoginSuccessAction extends Action {
-  type: 'LOGIN_SUCCESS';
-  user: User;
+export interface SetCurrentUserAction {
+  type: 'SET_CURRENT_USER';
+  payload: User | null;
 }
 
-export interface LoginFailureAction extends Action {
-  type: 'LOGIN_FAIL';
-}
-
-export interface LogoutAction extends Action {
-  type: 'LOGOUT_USER';
-}
-
-export interface GetUserAction extends Action {
-  type: 'GET_USER';
-  user: User;
-}
-
-export type AuthActions =
-  | UserLoadingAction
-  | LoginSuccessAction
-  | LoginFailureAction
-  | LogoutAction
-  | GetUserAction;
+export type AuthActions = SetCurrentUserAction;

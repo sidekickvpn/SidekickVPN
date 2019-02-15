@@ -29,8 +29,8 @@ class Reports extends Component<{}, ReportsState> {
           </h3>
 
           <div className="list-group">
-            {this.state.reports.map(report => (
-              <li className="list-group-item">
+            {this.state.reports.map((report, index) => (
+              <li key={index} className="list-group-item">
                 {report.text} -{' '}
                 <span className="badge badge-danger">{report.severity}</span>
               </li>

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { auth, githubAuthProvider, googleAuthProvider } from '../../firebase';
+// import { auth, githubAuthProvider, googleAuthProvider } from '../../firebase';
 import { connect } from 'react-redux';
-import { login } from '../../actions/auth';
+import { loginUser, UserLogin } from '../../actions/auth';
 import { Redirect } from 'react-router';
 
 interface LoginProps {
-  login: (username: string, password: string) => Promise<void>;
+  loginUser: (userData: UserLogin) => void;
   isAuthenticated: boolean;
 }
 
@@ -21,7 +21,8 @@ class Login extends Component<LoginProps> {
 
   onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await this.props.login(this.state.email, this.state.password);
+    const { email, password } = this.state;
+    await this.props.loginUser({ email, password });
   };
 
   render() {
@@ -64,14 +65,7 @@ class Login extends Component<LoginProps> {
                 </div>
                 <button className="btn btn-block btn-primary">Login</button>
               </form>
-              {/* <div className="row">
-                  <hr className="col" />
-                  <span className="col text-center mt-1 lead">
-                    Sign in With
-                  </span>
-                  <hr className="col" />
-                </div> */}
-              <div className="card-body">
+              {/* <div className="card-body">
                 <p className="text-center lead">Sign in With</p>
                 <button
                   className="btn btn-block btn-danger mb-2"
@@ -95,7 +89,7 @@ class Login extends Component<LoginProps> {
                   <i className="fab fa-github mr-2" />
                   GitHub
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -110,5 +104,5 @@ const mapStateToProps = (state: any) => ({
 
 export default connect(
   mapStateToProps,
-  { login }
+  { loginUser }
 )(Login);
