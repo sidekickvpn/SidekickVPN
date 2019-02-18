@@ -1,57 +1,60 @@
 import React, { Component } from 'react';
-import Subscription from './Subscription';
+import SideNav from './SideNav';
 import Summary from './Summary';
-import Devices from './Devices';
+import Devices from '../devices/Devices';
 import Reports from './Reports';
 import Billing from './Billing';
+import Subscription from './Subscription';
 
-class Dashboard extends Component<any, any> {
+interface DasbboardState {
+  selected: JSX.Element;
+}
+
+class Dashboard extends Component<any, DasbboardState> {
   state = {
     selected: <Summary />
   };
+
+  updateSelected = () => {
+    const { selected } = this.props.match.params;
+    switch (selected) {
+      case 'summary':
+        this.setState({ selected: <Summary /> });
+        break;
+      case 'devices':
+        this.setState({ selected: <Devices /> });
+        break;
+      case 'reports':
+        this.setState({ selected: <Reports /> });
+        break;
+      case 'billing':
+        this.setState({ selected: <Billing /> });
+        break;
+      case 'subscription':
+        this.setState({ selected: <Subscription /> });
+        break;
+      default:
+        this.setState({ selected: <Summary /> });
+    }
+  };
+
+  componentDidMount() {
+    this.updateSelected();
+  }
+
+  componentDidUpdate(prevProps: any) {
+    if (this.props !== prevProps) {
+      console.log('changed');
+      this.updateSelected();
+    }
+  }
 
   render() {
     return (
       <div>
         <div className="row">
-          <div className="col-md-3">
-            <div className="list-group">
-              <button
-                className="list-group-item list-group-item-action pointer"
-                onClick={() => this.setState({ selected: <Summary /> })}
-              >
-                <i className="fas fa-chart-bar inline-icon" />
-                Summary
-              </button>
-              <button
-                className="list-group-item list-group-item-action pointer"
-                onClick={() => this.setState({ selected: <Devices /> })}
-              >
-                <i className="fas fa-desktop inline-icon" />
-                Devices
-              </button>
-              <button
-                className="list-group-item list-group-item-action pointer"
-                onClick={() => this.setState({ selected: <Reports /> })}
-              >
-                <i className="fas fa-flag inline-icon" />
-                Reports
-              </button>
-              <button
-                className="list-group-item list-group-item-action pointer"
-                onClick={() => this.setState({ selected: <Billing /> })}
-              >
-                <i className="fas fa-receipt inline-icon" />
-                Billing
-              </button>
-              <button
-                className="list-group-item list-group-item-action pointer"
-                onClick={() => this.setState({ selected: <Subscription /> })}
-              >
-                <i className="fas fa-shopping-cart inline-icon" />
-                Subscription
-              </button>
-            </div>
+          <div className="col-md-3 mb-3">
+            <SideNav />
           </div>
           <div className="col-md-9">{this.state.selected}</div>
         </div>

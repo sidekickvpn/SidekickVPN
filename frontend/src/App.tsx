@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import jwt_decode from 'jwt-decode';
 import store from './store';
 
-import { logoutUser } from './actions/auth';
+import { logoutUser, setCurrentUser } from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
 
 import Navbar from './components/layout/Navbar';
@@ -13,13 +13,14 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import PrivateRoute from './components/common/PrivateRoute';
 import Dashboard from './components/dashboard/Dashboard';
+import AddDevice from './components/devices/AddDevice';
 
 // Check for token
 if (localStorage.jwtToken) {
   // Set Auth token header auth
   setAuthToken(localStorage.jwtToken);
   // Decode token and get user info and expiration
-  const decoded = jwt_decode(localStorage.jwtToken);
+  const decoded: any = jwt_decode(localStorage.jwtToken);
   // Set user and isAuthenticated
   store.dispatch(setCurrentUser(decoded));
 
@@ -28,8 +29,6 @@ if (localStorage.jwtToken) {
   if (decoded.exp < currentTime) {
     // Logout user
     store.dispatch(logoutUser());
-    // Redirect to login
-    window.location.href = '/login';
   }
 }
 
@@ -43,9 +42,19 @@ class App extends Component<any, any> {
             <div className="container mt-3">
               <Switch>
                 <Route exact path="/" component={Landing} />
-                <PrivateRoute exact path="/dashboard" component={Dashboard} />
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/register" component={Register} />
+                <PrivateRoute exact path="/dashboard/" component={Dashboard} />
+                <PrivateRoute
+                  exact
+                  path="/dashboard/:selected"
+                  component={Dashboard}
+                />
+                <PrivateRoute
+                  exact
+                  path="/dashboard/devices/add"
+                  component={AddDevice}
+                />
               </Switch>
             </div>
           </div>

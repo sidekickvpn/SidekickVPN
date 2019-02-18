@@ -25,14 +25,6 @@ app.use(express.urlencoded({ extended: false }));
 // Passport middleware
 app.use(passport.initialize());
 
-// EJS View Engine (Will be removed once frontend implemented)
-// app.set('view engine', 'ejs');
-// app.use(expressLayouts);
-
-// @route GET /
-// @desc Home Route
-// app.get('/', (req, res) => res.render('welcome'));
-
 // @route GET /config
 // @desc Get public key
 // @access Private
@@ -60,6 +52,18 @@ app.get(
 
 app.use('/api/clients', require('./routes/clients.js'));
 app.use('/api/users', require('./routes/users'));
+
+// Serve static assets if in production
+if (process.env.NODE_ENV === 'production') {
+  // Set static folder
+  app.use(express.static('../frontend/build'));
+
+  app.get('*', (req, res) => {
+    res.sendFile(
+      path.resolve(__dirname, '..', 'frontend', 'build', 'index.html')
+    );
+  });
+}
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

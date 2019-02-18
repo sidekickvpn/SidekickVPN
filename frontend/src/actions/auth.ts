@@ -1,10 +1,14 @@
 import axios from 'axios';
 import setAuthToken from '../utils/setAuthToken';
 import jwt_decode from 'jwt-decode';
-import { User } from './index';
 
-import { GET_ERRORS, SET_CURRENT_USER } from './types';
-import { Dispatch } from 'redux';
+import {
+  GET_ERRORS,
+  SET_CURRENT_USER,
+  User,
+  SetCurrentUserAction
+} from './types';
+import { Dispatch, Action } from 'redux';
 
 export interface UserRegister {
   firstname: string;
@@ -38,14 +42,14 @@ export const loginUser = (userData: UserLogin) => (dispatch: Dispatch) => {
   axios
     .post('/api/users/login', userData)
     .then(res => {
-      // Save to localStorage
+      // Save token to local storage
       const { token } = res.data;
-      // Set token to ls
       localStorage.setItem('jwtToken', token);
+
       // Set token to Auth header
       setAuthToken(token);
       // Decode token to get user data
-      const decoded = jwt_decode(token);
+      const decoded: User = jwt_decode(token);
       // Set current user
       dispatch(setCurrentUser(decoded));
     })
@@ -58,7 +62,7 @@ export const loginUser = (userData: UserLogin) => (dispatch: Dispatch) => {
 };
 
 // Set logged in user
-export const setCurrentUser = (decoded: User | {}) => {
+export const setCurrentUser = (decoded: User | null): SetCurrentUserAction => {
   return {
     type: SET_CURRENT_USER,
     payload: decoded
@@ -66,11 +70,10 @@ export const setCurrentUser = (decoded: User | {}) => {
 };
 
 // Log user out
-export const logoutUser = () => (dispatch: Dispatch<{}>) => {
-  // Remove token from localStorage
+export const logoutUser = (): any => (
+  dispatch: Dispatch<SetCurrentUserAction>
+): void => {
   localStorage.removeItem('jwtToken');
-  // Remove auth header for future requests
   setAuthToken('');
-  // Set current user to {} which will also set isAuthenticated to false
-  dispatch(setCurrentUser({}));
+  dispatch(setCurrentUser(null));
 };

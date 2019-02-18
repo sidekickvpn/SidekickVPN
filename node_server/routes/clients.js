@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const Device = require('../models/Device');
 
 // @route GET /client/:public_key
 // @param public_key - public key for the client
@@ -40,12 +41,8 @@ router.get(
   }
 );
 
-// @route GET /client/add
-// @desc Add client form
-// router.get('/add', (req, res) => res.render('add'));
-
 // @route POST /client
-// @desc Add peer to server
+// @desc Add device entry to DB and add peer to server
 // @access Private
 router.post(
   '/',
@@ -53,20 +50,29 @@ router.post(
     session: false
   }),
   (req, res) => {
-    const { public_key, vpn_ip } = req.body;
+    const { name, public_key, vpn_ip } = req.body;
     const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
-    exec(
-      `wg set ${VPN_NAME} peer ${public_key} allowed-ips ${vpn_ip}`,
-      (err, stdout, stderr) => {
-        if (err) {
-          console.error(err);
-          res.status(500).json({ Error: err });
-          return;
+
+    const newDevice = new Device({
+      name,
+      public_key,
+      vpn_ip
+    });
+
+    newDevice.save().then(device => {
+      exec(
+        `wg set ${VPN_NAME} peer ${public_key} allowed-ips ${vpn_ip}`,
+        (err, stdout, stderr) => {
+          if (err) {
+            console.error(err);
+            res.status(500).json({ Error: err });
+            return;
+          }
+          console.log(`Peer ${public_key} added`);
+          res.status(200).json(device);
         }
-        console.log(`Peer ${public_key} added`);
-        res.status(200).json({ 'Peer added': { public_key, vpn_ip } });
-      }
-    );
+      );
+    });
   }
 );
 

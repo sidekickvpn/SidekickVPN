@@ -19,7 +19,7 @@ class Navbar extends Component<NavbarProps> {
         {user ? (
           <Link className="nav-item nav-link" to="/dashboard">
             <i className="fas fa-user inline-icon" />
-            {`${user.firstname}${user.lastname}`}
+            {`${user.firstname} ${user.lastname}`}
           </Link>
         ) : (
           ''

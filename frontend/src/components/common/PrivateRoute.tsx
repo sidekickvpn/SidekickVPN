@@ -16,27 +16,6 @@ class PrivateRoute extends Component<RouteProps & StateProps, {}> {
     } else {
       return <Redirect to="/login" />;
     }
-    // if (auth.isLoading) {
-    //   return (
-    //     <Route
-    //       render={() => (
-    //         <div className="d-flex justify-content-center">
-    //           <div
-    //             className="spinner-grow"
-    //             role="status"
-    //             style={{ width: '5rem', height: '5rem' }}
-    //           >
-    //             <span className="sr-only">Loading...</span>
-    //           </div>
-    //         </div>
-    //       )}
-    //     />
-    //   );
-    // } else if (!auth.isAuthenticated) {
-    //   return <Redirect to="/login" />;
-    // } else {
-    //   return <Route {...rest} component={RouteComponent} />;
-    // }
   }
 }
 
