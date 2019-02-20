@@ -49,7 +49,7 @@ router.post(
   passport.authenticate('jwt', {
     session: false
   }),
-  (req, res) => {
+  async (req, res) => {
     const { name, public_key, vpn_ip } = req.body;
     const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
 
@@ -59,7 +59,11 @@ router.post(
       vpn_ip
     });
 
-    newDevice.save().then(device => {
+    const { id } = req.user;
+    const user = await User.findById(id);
+
+    try {
+      const device = await newDevice.save();
       exec(
         `wg set ${VPN_NAME} peer ${public_key} allowed-ips ${vpn_ip}`,
         (err, stdout, stderr) => {
@@ -72,7 +76,9 @@ router.post(
           res.status(200).json(device);
         }
       );
-    });
+    } catch (e) {
+      console.log(e);
+    }
   }
 );
 
