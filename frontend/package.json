@@ -4,10 +4,8 @@
   "private": true,
   "dependencies": {
     "@types/axios": "^0.14.0",
-    "@types/firebase": "^3.2.1",
     "@types/jest": "^23.3.13",
     "@types/jwt-decode": "^2.2.1",
-    "@types/materialize-css": "^1.0.6",
     "@types/node": "^10.12.21",
     "@types/react": "^16.8.1",
     "@types/react-dom": "^16.0.11",
@@ -16,7 +14,6 @@
     "@types/redux": "^3.6.0",
     "@types/redux-thunk": "^2.1.0",
     "axios": "^0.18.0",
-    "firebase": "^5.8.2",
     "jwt-decode": "^2.2.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
