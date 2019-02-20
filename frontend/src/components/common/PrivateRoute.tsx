@@ -11,26 +11,10 @@ interface StateProps {
 class PrivateRoute extends Component<RouteProps & StateProps, {}> {
   render() {
     const { component: RouteComponent, render, auth, ...rest } = this.props;
-    if (auth.isLoading) {
-      return (
-        <Route
-          render={() => (
-            <div className="d-flex justify-content-center">
-              <div
-                className="spinner-grow"
-                role="status"
-                style={{ width: '5rem', height: '5rem' }}
-              >
-                <span className="sr-only">Loading...</span>
-              </div>
-            </div>
-          )}
-        />
-      );
-    } else if (!auth.isAuthenticated) {
-      return <Redirect to="/login" />;
-    } else {
+    if (auth.isAuthenticated) {
       return <Route {...rest} component={RouteComponent} />;
+    } else {
+      return <Redirect to="/login" />;
     }
   }
 }

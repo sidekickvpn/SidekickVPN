@@ -5,3 +5,4 @@ venv
 .vscode
 *key
 node_modules
+*keys.js

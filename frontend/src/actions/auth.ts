@@ -1,66 +1,79 @@
-import { AuthActions, GetUserAction, LogoutAction } from './index';
+import axios from 'axios';
+import setAuthToken from '../utils/setAuthToken';
+import jwt_decode from 'jwt-decode';
 
-import { auth } from '../firebase';
-import { ThunkAction, ThunkDispatch } from 'redux-thunk';
-import { User } from 'firebase';
-import { Dispatch } from 'react';
-import { AuthState } from '../reducers/auth';
+import {
+  GET_ERRORS,
+  SET_CURRENT_USER,
+  User,
+  SetCurrentUserAction
+} from './types';
+import { Dispatch, Action } from 'redux';
 
-// LOGIN
-export const login = (
-  email: string,
-  password: string
-): ThunkAction<Promise<void>, AuthState, {}, AuthActions> => async (
-  dispatch: ThunkDispatch<AuthState, {}, AuthActions>
-): Promise<void> => {
-  try {
-    dispatch({ type: 'USER_LOADING' });
-    const userCredential = await auth.signInWithEmailAndPassword(
-      email,
-      password
-    );
+export interface UserRegister {
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
+}
 
-    if (userCredential.user) {
-      await dispatch({
-        type: 'LOGIN_SUCCESS',
-        user: userCredential.user
-      });
-    } else {
+export interface UserLogin {
+  email: string;
+  password: string;
+}
+
+// Register User
+export const registerUser = (userData: UserRegister, history: any) => (
+  dispatch: Dispatch
+) => {
+  axios
+    .post('/api/users/register', userData)
+    .then(res => history.push('/login'))
+    .catch(err =>
       dispatch({
-        type: 'LOGIN_FAIL'
-      });
-    }
-  } catch (err) {
-    console.log(err);
-    dispatch({
-      type: 'LOGIN_FAIL'
-    });
-  }
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
 };
 
-// LOGOUT
-export const logout = (): ThunkAction<
-  Promise<void>,
-  AuthState,
-  {},
-  LogoutAction
-> => async (
-  dispatch: ThunkDispatch<AuthState, {}, LogoutAction>
-): Promise<void> => {
-  await auth.signOut();
-  dispatch({
-    type: 'LOGOUT_USER'
-  });
+// Login - Get User Token
+export const loginUser = (userData: UserLogin) => (dispatch: Dispatch) => {
+  axios
+    .post('/api/users/login', userData)
+    .then(res => {
+      // Save token to local storage
+      const { token } = res.data;
+      localStorage.setItem('jwtToken', token);
+
+      // Set token to Auth header
+      setAuthToken(token);
+      // Decode token to get user data
+      const decoded: User = jwt_decode(token);
+      // Set current user
+      dispatch(setCurrentUser(decoded));
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
 };
 
-// GET USER
-export const getUser = (user: User | null): any => (
-  dispatch: Dispatch<GetUserAction>
+// Set logged in user
+export const setCurrentUser = (decoded: User | null): SetCurrentUserAction => {
+  return {
+    type: SET_CURRENT_USER,
+    payload: decoded
+  };
+};
+
+// Log user out
+export const logoutUser = (): any => (
+  dispatch: Dispatch<SetCurrentUserAction>
 ): void => {
-  if (user) {
-    dispatch({
-      type: 'GET_USER',
-      user
-    });
-  }
+  localStorage.removeItem('jwtToken');
+  setAuthToken('');
+  dispatch(setCurrentUser(null));
 };

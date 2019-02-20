@@ -3,30 +3,32 @@ import { NavLink, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { AppState } from '../../reducers';
-import { logout } from '../../actions/auth';
+import { logoutUser } from '../../actions/auth';
 import { AuthState } from '../../reducers/auth';
+import SideNav from '../dashboard/SideNav';
 
 interface NavbarProps {
-  logout: () => Promise<void>;
+  logoutUser: () => void;
   auth: AuthState;
 }
 
 class Navbar extends Component<NavbarProps> {
   render() {
     const { isAuthenticated, user } = this.props.auth;
+
     const authLinks = (
       <Fragment>
         {user ? (
           <Link className="nav-item nav-link" to="/dashboard">
             <i className="fas fa-user inline-icon" />
-            {user.displayName}
+            {`${user.firstname} ${user.lastname}`}
           </Link>
         ) : (
           ''
         )}
         <a
           className="nav-item nav-link pointer"
-          onClick={async () => await this.props.logout()}
+          onClick={async () => await this.props.logoutUser()}
         >
           Logout
         </a>
@@ -61,11 +63,42 @@ class Navbar extends Component<NavbarProps> {
             <span className="navbar-toggler-icon" />
           </button>
           <div className="collapse navbar-collapse" id="navbarResponsive">
-            <div className="navbar-nav">
+            <div className="navbar-nav d-lg-none d-xl-none">
               {isAuthenticated ? (
-                <NavLink className="nav-item nav-link" to="/dashboard">
-                  Dashboard
-                </NavLink>
+                <Fragment>
+                  <NavLink exact to="/dashboard" className="nav-item nav-link">
+                    <i className="fas fa-chart-bar inline-icon" />
+                    Summary
+                  </NavLink>
+                  <NavLink
+                    to="/dashboard/devices"
+                    className="nav-item nav-link"
+                  >
+                    <i className="fas fa-desktop inline-icon" />
+                    Devices
+                  </NavLink>
+                  <NavLink
+                    to="/dashboard/reports"
+                    className="nav-item nav-link"
+                  >
+                    <i className="fas fa-flag inline-icon" />
+                    Reports
+                  </NavLink>
+                  <NavLink
+                    to="/dashboard/billing"
+                    className="nav-item nav-link"
+                  >
+                    <i className="fas fa-receipt inline-icon" />
+                    Billing
+                  </NavLink>
+                  <NavLink
+                    to="/dashboard/subscription"
+                    className="nav-item nav-link"
+                  >
+                    <i className="fas fa-shopping-cart inline-icon" />
+                    Subscription
+                  </NavLink>
+                </Fragment>
               ) : (
                 ''
               )}
@@ -88,7 +121,7 @@ const mapStateToProps = (state: AppState) => ({
 
 export default connect(
   mapStateToProps,
-  { logout },
+  { logoutUser },
   null,
   {
     pure: false

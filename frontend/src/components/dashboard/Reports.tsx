@@ -11,15 +11,24 @@ interface ReportsState {
 
 class Reports extends Component<{}, ReportsState> {
   state = {
-    reports: [
-      {
-        text: 'Password entry detected',
-        severity: 'High'
-      }
-    ]
+    reports: []
   };
 
   render() {
+    const reports =
+      this.state.reports.length > 0 ? (
+        <div className="list-group">
+          {/* {this.state.reports.map((report, index) => (
+            <li key={index} className="list-group-item">
+              {report.text} -{' '}
+              <span className="badge badge-danger">{report.severity}</span>
+            </li>
+          ))} */}
+        </div>
+      ) : (
+        <h4>No Reports</h4>
+      );
+
     return (
       <div className="card">
         <div className="card-body">
@@ -28,14 +37,7 @@ class Reports extends Component<{}, ReportsState> {
             Reports
           </h3>
 
-          <div className="list-group">
-            {this.state.reports.map(report => (
-              <li className="list-group-item">
-                {report.text} -{' '}
-                <span className="badge badge-danger">{report.severity}</span>
-              </li>
-            ))}
-          </div>
+          {reports}
         </div>
       </div>
     );

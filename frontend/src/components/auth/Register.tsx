@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
-import { auth } from '../../firebase';
+import { connect } from 'react-redux';
 
-class Register extends Component {
+import { registerUser, UserRegister } from '../../actions/auth';
+import { AppState } from '../../reducers';
+
+interface RegisterProps {
+  registerUser: (userData: UserRegister, history: any) => void;
+  history: any;
+}
+
+class Register extends Component<RegisterProps, any> {
   state = {
-    firstName: '',
-    lastName: '',
+    firstname: '',
+    lastname: '',
     email: '',
     password: '',
     password2: ''
@@ -17,22 +25,25 @@ class Register extends Component {
   onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const { email, password, password2 } = this.state;
+    const { firstname, lastname, email, password, password2 } = this.state;
 
     if (password !== password2) {
       console.log('Passwords do not match');
     } else {
-      auth
-        .createUserWithEmailAndPassword(email, password)
-        .then(user => {
-          console.log(user);
-        })
-        .catch(err => console.log(err));
+      this.props.registerUser(
+        {
+          firstname,
+          lastname,
+          email,
+          password
+        },
+        this.props.history
+      );
     }
   };
 
   render() {
-    const { firstName, lastName, email, password, password2 } = this.state;
+    const { firstname, lastname, email, password, password2 } = this.state;
     return (
       <div className="row">
         <div className="card col-md-8 offset-md-2">
@@ -41,25 +52,25 @@ class Register extends Component {
             <form onSubmit={this.onSubmit}>
               <div className="row">
                 <div className="form-group col-md-6">
-                  <label htmlFor="firstName">First Name</label>
+                  <label htmlFor="firstname">First Name</label>
                   <input
-                    id="firstName"
+                    id="firstname"
                     type="text"
-                    name="firstName"
+                    name="firstname"
                     className="form-control"
                     onChange={this.onChange}
-                    value={firstName}
+                    value={firstname}
                   />
                 </div>
                 <div className="form-group col s6">
-                  <label htmlFor="lastName">Last Name</label>
+                  <label htmlFor="lastname">Last Name</label>
                   <input
-                    id="lastName"
+                    id="lastname"
                     type="text"
-                    name="lastName"
+                    name="lastname"
                     className="form-control"
                     onChange={this.onChange}
-                    value={lastName}
+                    value={lastname}
                   />
                 </div>
               </div>
@@ -105,4 +116,11 @@ class Register extends Component {
   }
 }
 
-export default Register;
+const mapStateToProps = (state: AppState) => ({
+  auth: state.auth
+});
+
+export default connect(
+  mapStateToProps,
+  { registerUser }
+)(Register);
