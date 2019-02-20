@@ -44,7 +44,6 @@ class Dashboard extends Component<any, DasbboardState> {
 
   componentDidUpdate(prevProps: any) {
     if (this.props !== prevProps) {
-      console.log('changed');
       this.updateSelected();
     }
   }
@@ -53,10 +52,10 @@ class Dashboard extends Component<any, DasbboardState> {
     return (
       <div>
         <div className="row">
-          <div className="col-md-3 mb-3">
+          <div className="col-md-3 mb-3 d-none d-lg-block d-xl-block">
             <SideNav />
           </div>
-          <div className="col-md-9">{this.state.selected}</div>
+          <div className="col-lg-9">{this.state.selected}</div>
         </div>
       </div>
     );

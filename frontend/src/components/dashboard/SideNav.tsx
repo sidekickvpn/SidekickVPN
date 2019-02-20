@@ -4,13 +4,14 @@ import { Link, NavLink } from 'react-router-dom';
 function SideNav() {
   return (
     <div className="list-group">
-      <Link
+      <NavLink
+        exact
         className="list-group-item list-group-item-action pointer"
         to="/dashboard"
       >
         <i className="fas fa-chart-bar inline-icon" />
         Summary
-      </Link>
+      </NavLink>
       <NavLink
         className="list-group-item list-group-item-action pointer"
         to="/dashboard/devices"
@@ -18,27 +19,27 @@ function SideNav() {
         <i className="fas fa-desktop inline-icon" />
         Devices
       </NavLink>
-      <Link
+      <NavLink
         className="list-group-item list-group-item-action pointer"
         to="/dashboard/reports"
       >
         <i className="fas fa-flag inline-icon" />
         Reports
-      </Link>
-      <Link
+      </NavLink>
+      <NavLink
         className="list-group-item list-group-item-action pointer"
         to="/dashboard/billing"
       >
         <i className="fas fa-receipt inline-icon" />
         Billing
-      </Link>
-      <Link
+      </NavLink>
+      <NavLink
         className="list-group-item list-group-item-action pointer"
         to="/dashboard/subscription"
       >
         <i className="fas fa-shopping-cart inline-icon" />
         Subscription
-      </Link>
+      </NavLink>
     </div>
   );
 }

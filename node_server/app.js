@@ -1,6 +1,5 @@
 const express = require('express');
 const exec = require('child_process').exec;
-const expressLayouts = require('express-ejs-layouts');
 const mongoose = require('mongoose');
 const passport = require('passport');
 
@@ -35,16 +34,30 @@ app.get(
   }),
   (req, res) => {
     const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
-
-    exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
+    exec(`hostname -I`, (err, stdout, stderr) => {
       if (err) {
         console.error(err);
-        res.status(500).json({ Error: err });
+        res.status(500).json({ Error: 'Could not get server ip' });
         return;
       }
-      const public_key = stdout.slice(0, stdout.length - 1);
-      res.status(200).json({
-        public_key
+      const ips = stdout.split(' ');
+
+      const publicIp = ips[0];
+      const vpnIp = ips[ips.length - 2];
+
+      exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ Error: 'Could not get server public key' });
+          return;
+        }
+        const publicKey = stdout.slice(0, stdout.length - 1);
+        res.status(200).json({
+          publicIp,
+          vpnIp,
+          vpnName: VPN_NAME,
+          publicKey
+        });
       });
     });
   }

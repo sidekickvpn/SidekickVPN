@@ -15,7 +15,6 @@ const initialState: AuthState = {
 export default function(state = initialState, action: AuthActions) {
   switch (action.type) {
     case SET_CURRENT_USER:
-      console.log(action.payload);
       return {
         ...state,
         isAuthenticated: action.payload !== null,

@@ -1,8 +1,71 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { Device } from './types';
+import DeviceItem from './DeviceItem';
 
-class Devices extends Component {
+interface DevicesState {
+  devices: Device[];
+}
+
+class Devices extends Component<{}, DevicesState> {
+  constructor(props: {}) {
+    super(props);
+
+    this.state = {
+      devices: []
+    };
+  }
+
+  onDeleteClick = async (_id: string) => {
+    await axios.delete(`/api/clients/${_id}`);
+    const updatedDevices = await this.state.devices.filter(
+      device => device._id !== _id
+    );
+    this.setState({ devices: updatedDevices });
+  };
+
+  async componentDidMount() {
+    try {
+      const res = await axios.get('/api/clients/all');
+      const { devices } = await res.data;
+
+      if (devices) {
+        this.setState({ devices });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   render() {
+    const { devices } = this.state;
+    const deviceEntries =
+      devices.length > 0 ? (
+        <table className="table table-striped table-responsive-md mt-3">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>VPN IP</th>
+              <th>Public Key</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {devices.map((device: Device) => (
+              <DeviceItem
+                key={device._id}
+                deviceId={device._id}
+                device={device}
+                onDeleteClick={(_id: string) => this.onDeleteClick(_id)}
+              />
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <h3>No Devices</h3>
+      );
+
     return (
       <div>
         <div className="card">
@@ -18,27 +81,7 @@ class Devices extends Component {
               </Link>
             </div>
 
-            <table className="table table-striped mt-3">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>VPN IP</th>
-                  <th>Public Key</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Luke's Laptop</td>
-                  <td>192.168.10.5</td>
-                  <td>some public key</td>
-                </tr>
-                <tr>
-                  <td>Luke's iPad</td>
-                  <td>192.168.10.6</td>
-                  <td>some other public key</td>
-                </tr>
-              </tbody>
-            </table>
+            {deviceEntries}
           </div>
         </div>
       </div>
