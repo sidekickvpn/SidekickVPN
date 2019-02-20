@@ -91,8 +91,12 @@ router.post(
       );
 
       // Add device to VPN server as a new peer
+      console.log(`VPNIP ${vpnIp.slice(0, vpnIp.length - 3)}/32`);
       await exec(
-        `wg set ${VPN_NAME} peer ${publicKey} allowed-ips ${vpnIp}`,
+        `wg set ${VPN_NAME} peer ${publicKey} allowed-ips ${vpnIp.slice(
+          0,
+          vpnIp.length - 3
+        )}/32`,
         (err, stdout, stderr) => {
           if (err) {
             console.error(err);

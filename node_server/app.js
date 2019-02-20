@@ -34,6 +34,8 @@ app.get(
   }),
   (req, res) => {
     const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
+    const VPN_PORT = process.env.VPN_PORT || '51820';
+
     exec(`hostname -I`, (err, stdout, stderr) => {
       if (err) {
         console.error(err);
@@ -42,7 +44,7 @@ app.get(
       }
       const ips = stdout.split(' ');
 
-      const publicIp = ips[0];
+      const publicIp = `${ips[0]}:${VPN_PORT}`;
       const vpnIp = ips[ips.length - 2];
 
       exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
