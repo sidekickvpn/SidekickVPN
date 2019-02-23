@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
-import { Provider } from 'react-redux';
 import jwt_decode from 'jwt-decode';
-import store from './store';
+// import store from './store';
 
-import { logoutUser, setCurrentUser } from './actions/auth';
+import { logoutUser, setCurrentUser, UserRegister } from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
 
 import Navbar from './components/layout/Navbar';
@@ -14,28 +13,95 @@ import Register from './components/auth/Register';
 import PrivateRoute from './components/common/PrivateRoute';
 import Dashboard from './components/dashboard/Dashboard';
 import AddDevice from './components/devices/AddDevice';
+import { User } from './actions/types';
+import { AuthState } from './reducers/auth';
+import AuthContext, {
+  UserLogin,
+  AuthContextState
+} from './context/AuthContext';
+import axios from 'axios';
 
-// Check for token
-if (localStorage.jwtToken) {
-  // Set Auth token header auth
-  setAuthToken(localStorage.jwtToken);
-  // Decode token and get user info and expiration
-  const decoded: any = jwt_decode(localStorage.jwtToken);
-  // Set user and isAuthenticated
-  store.dispatch(setCurrentUser(decoded));
-
-  // Check for expired token
-  const currentTime = Date.now() / 1000;
-  if (decoded.exp < currentTime) {
-    // Logout user
-    store.dispatch(logoutUser());
-  }
+interface AppState {
+  auth: AuthContextState;
 }
 
-class App extends Component<any, any> {
+// const { Provider, Consumer } = React.createContext<>({
+//   auth: {
+//     isAuthenticated: false,
+//     user: null
+//   }
+// });
+
+class App extends Component<{}, AppState> {
+  constructor(props: {}) {
+    super(props);
+
+    this.state = {
+      auth: {
+        isAuthenticated: false,
+        user: null,
+        loginUser: this.loginUser,
+        logoutUser: () => {},
+        setCurrentUser: () => {}
+      }
+    };
+  }
+
+  // Login - Get User Token
+  loginUser = (userData: UserLogin) => {
+    axios
+      .post('/api/users/login', userData)
+      .then(res => {
+        // Save token to local storage
+        const { token } = res.data;
+        localStorage.setItem('jwtToken', token);
+
+        // Set token to Auth header
+        setAuthToken(token);
+        // Decode token to get user data
+        const decoded: User = jwt_decode(token);
+        // Set current user
+        // dispatch(setCurrentUser(decoded));
+      })
+      .catch(err => console.log(err));
+  };
+
+  componentDidMount() {
+    // Check for token
+    if (localStorage.jwtToken) {
+      // Set Auth token header auth
+      setAuthToken(localStorage.jwtToken);
+      // Decode token and get user info and expiration
+      const decoded: any = jwt_decode(localStorage.jwtToken);
+      // Set user and isAuthenticated
+      // store.dispatch(setCurrentUser(decoded));
+      this.setState({
+        auth: {
+          ...this.state.auth,
+          isAuthenticated: true,
+          user: decoded
+        }
+      });
+
+      // Check for expired token
+      const currentTime = Date.now() / 1000;
+      if (decoded.exp < currentTime) {
+        // Logout user
+        // store.dispatch(logoutUser());
+        this.setState({
+          auth: {
+            ...this.state.auth,
+            isAuthenticated: false,
+            user: null
+          }
+        });
+      }
+    }
+  }
+
   render() {
     return (
-      <Provider store={store}>
+      <AuthContext.Provider value={this.state.auth}>
         <Router>
           <div>
             <Navbar />
@@ -59,7 +125,7 @@ class App extends Component<any, any> {
             </div>
           </div>
         </Router>
-      </Provider>
+      </AuthContext.Provider>
     );
   }
 }
