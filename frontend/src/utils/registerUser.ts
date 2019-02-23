@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { UserRegister } from '../actions/auth';
+import { UserRegister } from '../context/AuthContext';
 
 // Register User
 const registerUser = (userData: UserRegister, history: any) => {

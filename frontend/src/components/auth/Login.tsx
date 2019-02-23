@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
-// import { auth, githubAuthProvider, googleAuthProvider } from '../../firebase';
-import { connect } from 'react-redux';
-import { loginUser, UserLogin } from '../../actions/auth';
 import { Redirect } from 'react-router';
-import AuthContext, { AuthContextState } from '../../context/AuthContext';
+import AuthContext from '../../context/AuthContext';
 
 class Login extends Component<{}> {
-  // context: AuthContextState
   static contextType = AuthContext;
   context!: React.ContextType<typeof AuthContext>;
 
@@ -27,6 +23,9 @@ class Login extends Component<{}> {
 
   render() {
     const { email, password } = this.state;
+    if (this.context.isAuthenticated) {
+      return <Redirect to="/dashboard" />;
+    }
     return (
       <div className="row">
         <div className="col-md-6 offset-md-3">

@@ -3,7 +3,6 @@ import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 // import store from './store';
 
-import { logoutUser, setCurrentUser, UserRegister } from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
 
 import Navbar from './components/layout/Navbar';
@@ -13,37 +12,22 @@ import Register from './components/auth/Register';
 import PrivateRoute from './components/common/PrivateRoute';
 import Dashboard from './components/dashboard/Dashboard';
 import AddDevice from './components/devices/AddDevice';
-import { User } from './actions/types';
-import { AuthState } from './reducers/auth';
 import AuthContext, {
   UserLogin,
-  AuthContextState
+  AuthContextState,
+  User
 } from './context/AuthContext';
 import axios from 'axios';
 
-interface AppState {
-  auth: AuthContextState;
-}
-
-// const { Provider, Consumer } = React.createContext<>({
-//   auth: {
-//     isAuthenticated: false,
-//     user: null
-//   }
-// });
-
-class App extends Component<{}, AppState> {
+class App extends Component<{}, AuthContextState> {
   constructor(props: {}) {
     super(props);
 
     this.state = {
-      auth: {
-        isAuthenticated: false,
-        user: null,
-        loginUser: this.loginUser,
-        logoutUser: () => {},
-        setCurrentUser: () => {}
-      }
+      isAuthenticated: false,
+      user: null,
+      loginUser: this.loginUser,
+      logoutUser: this.logoutUser
     };
   }
 
@@ -62,8 +46,19 @@ class App extends Component<{}, AppState> {
         const decoded: User = jwt_decode(token);
         // Set current user
         // dispatch(setCurrentUser(decoded));
+        this.setState({
+          isAuthenticated: true,
+          user: decoded
+        });
       })
       .catch(err => console.log(err));
+  };
+
+  logoutUser = () => {
+    // Log user out
+    localStorage.removeItem('jwtToken');
+    setAuthToken('');
+    this.setState({ isAuthenticated: false, user: null });
   };
 
   componentDidMount() {
@@ -76,11 +71,8 @@ class App extends Component<{}, AppState> {
       // Set user and isAuthenticated
       // store.dispatch(setCurrentUser(decoded));
       this.setState({
-        auth: {
-          ...this.state.auth,
-          isAuthenticated: true,
-          user: decoded
-        }
+        isAuthenticated: true,
+        user: decoded
       });
 
       // Check for expired token
@@ -89,11 +81,8 @@ class App extends Component<{}, AppState> {
         // Logout user
         // store.dispatch(logoutUser());
         this.setState({
-          auth: {
-            ...this.state.auth,
-            isAuthenticated: false,
-            user: null
-          }
+          isAuthenticated: false,
+          user: null
         });
       }
     }
@@ -101,7 +90,7 @@ class App extends Component<{}, AppState> {
 
   render() {
     return (
-      <AuthContext.Provider value={this.state.auth}>
+      <AuthContext.Provider value={this.state}>
         <Router>
           <div>
             <Navbar />

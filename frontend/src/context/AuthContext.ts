@@ -24,15 +24,13 @@ export interface AuthContextState {
   user: User | null;
   loginUser: (userData: UserLogin) => void;
   logoutUser: () => void;
-  setCurrentUser: () => void;
 }
 
 const AuthContext = React.createContext<AuthContextState>({
   isAuthenticated: false,
   user: null,
   loginUser: () => {},
-  logoutUser: () => {},
-  setCurrentUser: () => {}
+  logoutUser: () => {}
 });
 
 export default AuthContext;

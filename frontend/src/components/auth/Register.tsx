@@ -1,15 +1,20 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
-import { registerUser, UserRegister } from '../../actions/auth';
-import { AppState } from '../../reducers';
+import registerUser from '../../utils/registerUser';
+import AuthContext from '../../context/AuthContext';
 
-interface RegisterProps {
-  registerUser: (userData: UserRegister, history: any) => void;
-  history: any;
+interface RegisterState {
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
+  password2: string;
 }
 
-class Register extends Component<RegisterProps, any> {
+class Register extends Component<any, RegisterState> {
+  static contextType = AuthContext;
+  context!: React.ContextType<typeof AuthContext>;
+
   state = {
     firstname: '',
     lastname: '',
@@ -19,7 +24,7 @@ class Register extends Component<RegisterProps, any> {
   };
 
   onChange = (e: React.FormEvent<HTMLInputElement>) => {
-    this.setState({ [e.currentTarget.name]: e.currentTarget.value });
+    this.setState({ [e.currentTarget.name]: e.currentTarget.value } as any);
   };
 
   onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -30,7 +35,7 @@ class Register extends Component<RegisterProps, any> {
     if (password !== password2) {
       console.log('Passwords do not match');
     } else {
-      this.props.registerUser(
+      registerUser(
         {
           firstname,
           lastname,
@@ -116,11 +121,4 @@ class Register extends Component<RegisterProps, any> {
   }
 }
 
-const mapStateToProps = (state: AppState) => ({
-  auth: state.auth
-});
-
-export default connect(
-  mapStateToProps,
-  { registerUser }
-)(Register);
+export default Register;

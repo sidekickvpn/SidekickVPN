@@ -1,17 +1,14 @@
 import React, { Component } from 'react';
 import { Route, Redirect, RouteProps } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { AuthState } from '../../reducers/auth';
-import { AppState } from '../../reducers';
+import AuthContext from '../../context/AuthContext';
 
-interface StateProps {
-  auth: AuthState;
-}
+class PrivateRoute extends Component<RouteProps, {}> {
+  static contextType = AuthContext;
+  context!: React.ContextType<typeof AuthContext>;
 
-class PrivateRoute extends Component<RouteProps & StateProps, {}> {
   render() {
-    const { component: RouteComponent, render, auth, ...rest } = this.props;
-    if (auth.isAuthenticated) {
+    const { component: RouteComponent, render, ...rest } = this.props;
+    if (this.context.isAuthenticated) {
       return <Route {...rest} component={RouteComponent} />;
     } else {
       return <Redirect to="/login" />;
@@ -19,8 +16,4 @@ class PrivateRoute extends Component<RouteProps & StateProps, {}> {
   }
 }
 
-const mapStateToProps = (state: AppState) => ({
-  auth: state.auth
-});
-
-export default connect(mapStateToProps)(PrivateRoute);
+export default PrivateRoute;
