@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
-// import store from './store';
+// import { Stomp } from '@stomp/stompjs';
 
 import setAuthToken from './utils/setAuthToken';
 
@@ -18,16 +18,27 @@ import AuthContext, {
   User
 } from './context/AuthContext';
 import axios from 'axios';
+import { ReportsContextState } from './context/ReportsContext';
 
-class App extends Component<{}, AuthContextState> {
+interface AppState {
+  auth: AuthContextState;
+  reports: ReportsContextState;
+}
+
+class App extends Component<{}, AppState> {
   constructor(props: {}) {
     super(props);
 
     this.state = {
-      isAuthenticated: false,
-      user: null,
-      loginUser: this.loginUser,
-      logoutUser: this.logoutUser
+      auth: {
+        isAuthenticated: false,
+        user: null,
+        loginUser: this.loginUser,
+        logoutUser: this.logoutUser
+      },
+      reports: {
+        reports: []
+      }
     };
   }
 
@@ -47,8 +58,11 @@ class App extends Component<{}, AuthContextState> {
         // Set current user
         // dispatch(setCurrentUser(decoded));
         this.setState({
-          isAuthenticated: true,
-          user: decoded
+          auth: {
+            ...this.state.auth,
+            isAuthenticated: true,
+            user: decoded
+          }
         });
       })
       .catch(err => console.log(err));
@@ -58,10 +72,16 @@ class App extends Component<{}, AuthContextState> {
     // Log user out
     localStorage.removeItem('jwtToken');
     setAuthToken('');
-    this.setState({ isAuthenticated: false, user: null });
+    this.setState({
+      auth: {
+        ...this.state.auth,
+        isAuthenticated: false,
+        user: null
+      }
+    });
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     // Check for token
     if (localStorage.jwtToken) {
       // Set Auth token header auth
@@ -71,8 +91,11 @@ class App extends Component<{}, AuthContextState> {
       // Set user and isAuthenticated
       // store.dispatch(setCurrentUser(decoded));
       this.setState({
-        isAuthenticated: true,
-        user: decoded
+        auth: {
+          ...this.state.auth,
+          isAuthenticated: true,
+          user: decoded
+        }
       });
 
       // Check for expired token
@@ -81,16 +104,33 @@ class App extends Component<{}, AuthContextState> {
         // Logout user
         // store.dispatch(logoutUser());
         this.setState({
-          isAuthenticated: false,
-          user: null
+          auth: {
+            ...this.state.auth,
+            isAuthenticated: false,
+            user: null
+          }
         });
       }
     }
+
+    // try {
+    //   const client = Stomp.client(`ws://${window.location.hostname}:15647`);
+
+    //   const on_connect = () => {
+    //     client.subscribe(`/reports/${this.state.auth.user.id}`, data => {
+    //       console.log(data.body);
+    //     });
+    //   };
+
+    //   client.connect('guest', 'guest', on_connect, on_error, '/');
+    // } catch (e) {
+    //   console.log(e);
+    // }
   }
 
   render() {
     return (
-      <AuthContext.Provider value={this.state}>
+      <AuthContext.Provider value={this.state.auth}>
         <Router>
           <div>
             <Navbar />

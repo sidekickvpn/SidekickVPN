@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const { Report } = require('../models/Report');
+const Report = require('../models/Report');
 
 // @route GET /reports
 // @desc Get all reports for current user
@@ -13,7 +13,10 @@ router.get(
   }),
   async (req, res) => {
     try {
-      const reports = await Report.find({ user: req.user._id });
+      const reports = await Report.find({}).populate({
+        path: 'User',
+        match: { _id: { $eq: req.user.id } }
+      });
       if (reports.length > 0) {
         res.status(200).json({ reports });
       } else {
@@ -26,33 +29,36 @@ router.get(
   }
 );
 
-// @route POST /reports
-// @desc Add a report to the database
-// @access Private
-router.post(
-  '/',
-  passport.authenticate('jwt', {
-    session: false
-  }),
-  async (req, res) => {
-    const { name, severity, message } = req.body;
+// // Add new report to database
+// async function addReport(report) {
+//   const newReport = new Report(report);
 
-    const newReport = new Report({
-      name,
-      severity,
-      message,
-      user: req.user._id
-    });
+//   try {
+//     const report = await newReport.save();
 
-    try {
-      const report = await newReport.save();
+//     res.status(201).json(report);
+//   } catch (e) {
+//     console.log(e);
+//     res.status(500).json({ Error: 'Error when trying to add report' });
+//   }
+// }
 
-      res.status(201).json(report);
-    } catch (e) {
-      console.log(e);
-      res.status(500).json({ Error: 'Error when trying to add report' });
-    }
-  }
-);
+// // @route POST /reports
+// // @desc Add a report to the database
+// // @access Private
+// router.post(
+//   '/',
+//   passport.authenticate('jwt', {
+//     session: false
+//   }),
+//   async (req, res) => {
+//     const { name, severity, message, public_key } = req.body;
+//     const newReport = {
+//       name,
+//       severity,
+//       message
+//     }
+//   }
+// );
 
 module.exports = router;

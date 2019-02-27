@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-
-interface Report {
-  name: string;
-  severity: string;
-  message: string;
-}
+import ReportContext, { Report } from '../../context/ReportsContext';
 
 interface ReportsState {
   reports: Report[];
 }
 
 class Reports extends Component<{}, ReportsState> {
+  // static contextType = ReportContext;
+  // context!: React.ContextType<typeof ReportContext>;
+
   state = {
     reports: []
   };

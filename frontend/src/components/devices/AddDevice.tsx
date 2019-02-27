@@ -52,7 +52,7 @@ export class AddDevice extends Component<any, AddDeviceState> {
 
   onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { name, privateKey, publicKey, vpnIp } = this.state;
+    const { name, publicKey, vpnIp } = this.state;
 
     // Get server info
     try {
@@ -64,7 +64,6 @@ export class AddDevice extends Component<any, AddDeviceState> {
       });
 
       // Create/Download config file
-      this.downloadFile();
       this.props.history.push('/dashboard/devices');
     } catch (err) {
       console.log(err);

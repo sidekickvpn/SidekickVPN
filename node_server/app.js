@@ -2,6 +2,10 @@ const express = require('express');
 const exec = require('child_process').exec;
 const mongoose = require('mongoose');
 const passport = require('passport');
+const amqp = require('amqplib/callback_api');
+const User = require('./models/User');
+const { Device } = require('./models/Device');
+const Report = require('./models/Report');
 
 const app = express();
 
@@ -16,6 +20,47 @@ mongoose
   .connect(db, { useNewUrlParser: true })
   .then(() => console.log('Connected to DB'))
   .catch(err => console.log(err));
+
+// Connect to RabbitMQ
+amqp.connect('amqp://localhost', (err, connection) => {
+  console.log('Connected to RabbitMQ channel');
+  connection.createChannel((err, channel) => {
+    const queue = process.env.QUEUE_NAME || 'encrypted-pkts';
+
+    channel.assertQueue(queue, { durable: false, autoDelete: true });
+    channel.consume(
+      queue,
+      async msg => {
+        // TODO: Validation
+        try {
+          // console.log(user);
+          const { name, severity, message, publicKey } = JSON.parse(
+            msg.content.toString()
+          );
+          const device = await Device.findOne({ publicKey }).populate('User');
+
+          if (!device) throw err;
+
+          const newReport = new Report({
+            name,
+            severity,
+            message,
+            device: device.id,
+            user: device.user.id
+          });
+          console.log(newReport);
+
+          const report = await newReport.save();
+
+          console.log(`Report Added: ${report}`);
+        } catch (e) {
+          console.log(e);
+        }
+      },
+      { noAck: true }
+    );
+  });
+});
 
 // Body Parser
 app.use(express.json());

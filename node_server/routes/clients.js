@@ -52,8 +52,13 @@ router.get(
   async (req, res) => {
     const { _id } = req.user;
     try {
-      const user = await User.findOne({ _id });
-      res.status(200).json({ devices: user.devices });
+      // const user = await User.findOne({ _id });
+      await User.findOne({ _id })
+        .populate('devices')
+        .exec((err, user) => {
+          if (err) throw err;
+          res.status(200).json({ devices: user.devices });
+        });
     } catch (e) {
       console.log(e);
       res.status(500).json({ Error: 'Could not get devices' });
@@ -73,40 +78,43 @@ router.post(
     const { name, publicKey, vpnIp } = req.body;
     const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
 
-    const newDevice = new Device({
-      name,
-      publicKey,
-      vpnIp
-    });
-
     try {
       const { _id } = req.user;
+      const newDevice = new Device({
+        name,
+        publicKey,
+        vpnIp,
+        user: _id
+      });
 
-      // Push new device to array of devices for current user
-      await User.findOneAndUpdate(
-        { _id },
-        {
-          $push: { devices: newDevice }
-        }
-      );
+      const device = await newDevice.save();
+
+      // Update user with device reference
+      await User.findOne({ _id })
+        .populate('devices')
+        .exec((err, user) => {
+          user.devices.push(device);
+          user.save();
+          res.status(200).json({ device });
+        });
 
       // Add device to VPN server as a new peer
-      console.log(`VPNIP ${vpnIp.slice(0, vpnIp.length - 3)}/32`);
-      await exec(
-        `wg set ${VPN_NAME} peer ${publicKey} allowed-ips ${vpnIp.slice(
-          0,
-          vpnIp.length - 3
-        )}/32`,
-        (err, stdout, stderr) => {
-          if (err) {
-            console.error(err);
-            res.status(500).json({ Error: err });
-            return;
-          }
-          console.log(`Peer ${publicKey} added`);
-          res.status(200).json({ Success: 'Device added', publicKey });
-        }
-      );
+      // console.log(`VPNIP ${vpnIp.slice(0, vpnIp.length - 3)}/32`);
+      // await exec(
+      //   `wg set ${VPN_NAME} peer ${publicKey} allowed-ips ${vpnIp.slice(
+      //     0,
+      //     vpnIp.length - 3
+      //   )}/32`,
+      //   (err, stdout, stderr) => {
+      //     if (err) {
+      //       console.error(err);
+      //       res.status(500).json({ Error: err });
+      //       return;
+      //     }
+      //     console.log(`Peer ${publicKey} added`);
+      //     res.status(200).json({ Success: 'Device added', publicKey });
+      //   }
+      // );
     } catch (e) {
       console.log(e);
     }
