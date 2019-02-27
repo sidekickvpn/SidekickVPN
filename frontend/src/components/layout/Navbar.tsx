@@ -1,50 +1,14 @@
 import React, { Component, Fragment } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 
-import { AppState } from '../../reducers';
-import { logoutUser } from '../../actions/auth';
-import { AuthState } from '../../reducers/auth';
-import SideNav from '../dashboard/SideNav';
+import AuthContext, { AuthContextState } from '../../context/AuthContext';
 
-interface NavbarProps {
-  logoutUser: () => void;
-  auth: AuthState;
-}
+class Navbar extends Component<{}, {}> {
+  static contextType = AuthContext;
+  context!: React.ContextType<typeof AuthContext>;
 
-class Navbar extends Component<NavbarProps> {
   render() {
-    const { isAuthenticated, user } = this.props.auth;
-
-    const authLinks = (
-      <Fragment>
-        {user ? (
-          <Link className="nav-item nav-link" to="/dashboard">
-            <i className="fas fa-user inline-icon" />
-            {`${user.firstname} ${user.lastname}`}
-          </Link>
-        ) : (
-          ''
-        )}
-        <a
-          className="nav-item nav-link pointer"
-          onClick={async () => await this.props.logoutUser()}
-        >
-          Logout
-        </a>
-      </Fragment>
-    );
-
-    const guestLinks = (
-      <Fragment>
-        <NavLink className="nav-item nav-link" to="/login">
-          Login
-        </NavLink>
-        <NavLink className="nav-item nav-link" to="/register">
-          Register
-        </NavLink>
-      </Fragment>
-    );
+    const { isAuthenticated, user, logoutUser } = this.context;
 
     return (
       <div className="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -105,7 +69,29 @@ class Navbar extends Component<NavbarProps> {
             </div>
             <div className="ml-auto d-lg-flex d-md-block">
               <div className="navbar-nav">
-                {isAuthenticated ? authLinks : guestLinks}
+                {isAuthenticated ? (
+                  <Fragment>
+                    <Link className="nav-item nav-link" to="/dashboard">
+                      <i className="fas fa-user inline-icon" />
+                      {`${user!.firstname} ${user!.lastname}`}
+                    </Link>
+                    <a
+                      className="nav-item nav-link pointer"
+                      onClick={async () => await logoutUser()}
+                    >
+                      Logout
+                    </a>
+                  </Fragment>
+                ) : (
+                  <Fragment>
+                    <NavLink className="nav-item nav-link" to="/login">
+                      Login
+                    </NavLink>
+                    <NavLink className="nav-item nav-link" to="/register">
+                      Register
+                    </NavLink>
+                  </Fragment>
+                )}
               </div>
             </div>
           </div>
@@ -114,16 +100,4 @@ class Navbar extends Component<NavbarProps> {
     );
   }
 }
-
-const mapStateToProps = (state: AppState) => ({
-  auth: state.auth
-});
-
-export default connect(
-  mapStateToProps,
-  { logoutUser },
-  null,
-  {
-    pure: false
-  }
-)(Navbar);
+export default Navbar;
