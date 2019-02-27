@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 interface Report {
-  text: string;
+  name: string;
   severity: string;
+  message: string;
 }
 
 interface ReportsState {
@@ -14,16 +16,47 @@ class Reports extends Component<{}, ReportsState> {
     reports: []
   };
 
+  async componentDidMount() {
+    try {
+      const res = await axios.get('/api/reports');
+      const { reports } = await res.data;
+
+      if (reports) {
+        this.setState({ reports });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  getBadgeType = (severity: string): string => {
+    switch (severity) {
+      case 'high':
+        return 'danger';
+      case 'medium':
+        return 'warning';
+      case 'low':
+        return 'success';
+      default:
+        return 'warning';
+    }
+  };
+
   render() {
     const reports =
       this.state.reports.length > 0 ? (
         <div className="list-group">
-          {/* {this.state.reports.map((report, index) => (
+          {this.state.reports.map((report: Report, index) => (
             <li key={index} className="list-group-item">
-              {report.text} -{' '}
-              <span className="badge badge-danger">{report.severity}</span>
+              {report.name} -{' '}
+              <span
+                className={`badge badge-${this.getBadgeType(report.severity)}`}
+              >
+                {report.severity}
+              </span>
+              <p>{report.message}</p>
             </li>
-          ))} */}
+          ))}
         </div>
       ) : (
         <h4>No Reports</h4>

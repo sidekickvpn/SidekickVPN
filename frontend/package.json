@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@stomp/stompjs": "^5.2.0",
     "@types/axios": "^0.14.0",
     "@types/jest": "^23.3.13",
     "@types/jwt-decode": "^2.2.1",
@@ -34,7 +35,7 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "proxy": "http://10.90.53.109:5000",
+  "proxy": "http://localhost:5000",
   "devDependencies": {
     "terser": "^3.14.1"
   }
