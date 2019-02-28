@@ -25,7 +25,7 @@ mongoose
 amqp.connect('amqp://localhost', (err, connection) => {
   console.log('Connected to RabbitMQ channel');
   connection.createChannel((err, channel) => {
-    const queue = process.env.QUEUE_NAME || 'encrypted-pkts';
+    const queue = process.env.QUEUE_NAME || 'reports';
 
     channel.assertQueue(queue, { durable: false, autoDelete: true });
     channel.consume(
