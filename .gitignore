@@ -6,3 +6,4 @@ venv
 *key
 node_modules
 *keys.js
+__pycache__
