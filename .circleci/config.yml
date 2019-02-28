@@ -11,7 +11,11 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-{{ checksum "node_server/package.json" }}
+            - v1-dependencies-
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "frontend/package.json" }}
             - v1-dependencies-
       - run:
           name: Install backend dependencies
@@ -21,13 +25,13 @@ jobs:
       #     command: npm --prefix node_backend install
       - save_cache:
           paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+            - node_server/node_modules
+          key: v1-dependencies-{{ checksum "node_server/package.json" }}
+      - save_cache:
+          paths:
+            - frontend/node_modules
+          key: v1-dependencies-{{ checksum "frontend/package.json" }}
       - deploy:
           name: Deploy
           command: |
-            docker-compose stop
-            cd vpntrafficanalysis
-            git pull origin master
-            docker-compose up
-            npm --prefix node_server start
+            ssh $DROPLET_USER@$DROPLET_HOST "./run_deploy.sh"
