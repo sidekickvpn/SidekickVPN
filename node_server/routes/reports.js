@@ -17,11 +17,7 @@ router.get(
         path: 'User',
         match: { _id: { $eq: req.user.id } }
       });
-      if (reports.length > 0) {
-        res.status(200).json({ reports });
-      } else {
-        res.status(404).json({ NotFound: 'No reports found' });
-      }
+      res.status(200).json({ reports });
     } catch (e) {
       console.log(e);
       res.status(500).json({ Error: 'Error getting reports' });
