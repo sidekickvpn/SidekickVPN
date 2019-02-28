@@ -1,0 +1,13 @@
+client_prototype
+logs
+old
+credentials.json
+*/venv
+.vscode
+*key
+*/node_modules
+*keys.js
+*/__pycache__
+.gitignore
+.git
+README.md

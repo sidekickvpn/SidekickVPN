@@ -132,7 +132,6 @@ router.delete(
     const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
 
     const { _id } = req.user;
-    console.log(id);
     try {
       // Ensure device belonds to user (ie. only delete if user owns the device)
       const user = await User.findOne({

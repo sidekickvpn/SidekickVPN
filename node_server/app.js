@@ -22,45 +22,49 @@ mongoose
   .catch(err => console.log(err));
 
 // Connect to RabbitMQ
-amqp.connect('amqp://localhost', (err, connection) => {
-  console.log('Connected to RabbitMQ channel');
-  connection.createChannel((err, channel) => {
-    const queue = process.env.QUEUE_NAME || 'reports';
+amqp.connect(
+  process.env.RABBITMQ_HOST || 'amqp://localhost',
+  (err, connection) => {
+    if (err) {
+      console.log(err);
+    }
+    console.log('Connected to RabbitMQ channel');
+    connection.createChannel((err, channel) => {
+      const queue = process.env.QUEUE_NAME || 'reports';
 
-    channel.assertQueue(queue, { durable: false, autoDelete: true });
-    channel.consume(
-      queue,
-      async msg => {
-        // TODO: Validation
-        try {
-          // console.log(user);
-          const { name, severity, message, publicKey } = JSON.parse(
-            msg.content.toString()
-          );
-          const device = await Device.findOne({ publicKey }).populate('User');
+      channel.assertQueue(queue, { durable: false, autoDelete: true });
+      channel.consume(
+        queue,
+        async msg => {
+          // TODO: Validation
+          try {
+            const { name, severity, message, publicKey } = JSON.parse(
+              msg.content.toString()
+            );
+            const device = await Device.findOne({ publicKey }).populate('User');
 
-          if (!device) throw err;
+            if (!device) throw err;
 
-          const newReport = new Report({
-            name,
-            severity,
-            message,
-            device: device.id,
-            user: device.user.id
-          });
-          console.log(newReport);
+            const newReport = new Report({
+              name,
+              severity,
+              message,
+              device: device.id,
+              user: device.user.id
+            });
 
-          const report = await newReport.save();
+            const report = await newReport.save();
 
-          console.log(`Report Added: ${report}`);
-        } catch (e) {
-          console.log(e);
-        }
-      },
-      { noAck: true }
-    );
-  });
-});
+            console.log(`Report Added: ${report}`);
+          } catch (e) {
+            console.log(e);
+          }
+        },
+        { noAck: true }
+      );
+    });
+  }
+);
 
 // Body Parser
 app.use(express.json());
@@ -81,16 +85,18 @@ app.get(
     const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
     const VPN_PORT = process.env.VPN_PORT || '51820';
 
-    exec(`hostname -I`, (err, stdout, stderr) => {
+    exec(`ip addr | awk '/inet/ { print $2 }'`, (err, stdout, stderr) => {
       if (err) {
         console.error(err);
         res.status(500).json({ Error: 'Could not get server ip' });
         return;
       }
-      const ips = stdout.split(' ');
+      const ips = stdout.split('\n');
 
-      const publicIp = `${ips[0]}:${VPN_PORT}`;
-      const vpnIp = ips[ips.length - 2];
+      // const publicIp = `${ips[0]}:${VPN_PORT}`;
+      // const vpnIp = ips[ips.length - 2];
+      const publicIp = `${ips[2].slice(0, ips[2].length - 3)}:${VPN_PORT}`;
+      const vpnIp = ips[1].slice(0, ips[1].length - 3);
 
       exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
         if (err) {

@@ -1,0 +1,33 @@
+version: 2
+jobs:
+  build:
+    branches:
+      only:
+        - master
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+      - run:
+          name: Install backend dependencies
+          command: npm --prefix node_server install && npm --prefix frontend install
+      # - tests:
+      #     name: Run Backend/Frontend tests
+      #     command: npm --prefix node_backend install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - deploy:
+          name: Deploy
+          command: |
+            docker-compose stop
+            cd vpntrafficanalysis
+            git pull origin master
+            docker-compose up
+            npm --prefix node_server start
