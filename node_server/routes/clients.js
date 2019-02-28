@@ -95,7 +95,6 @@ router.post(
         .exec((err, user) => {
           user.devices.push(device);
           user.save();
-          res.status(200).json({ device });
         });
 
       // Add device to VPN server as a new peer
