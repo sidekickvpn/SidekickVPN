@@ -33,5 +33,4 @@ jobs:
           key: v1-dependencies-{{ checksum "frontend/package.json" }}
       - deploy:
           name: Deploy
-          command: |
-            ssh $DROPLET_USER@$DROPLET_HOST "./run_deploy.sh"
+          command: ssh -v $DROPLET_USER@$DROPLET_HOST "./run_deploy.sh"
