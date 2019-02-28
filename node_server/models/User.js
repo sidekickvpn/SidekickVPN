@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { DeviceSchema } = require('./Device');
 
 const UserSchema = new mongoose.Schema({
   firstname: {
@@ -18,10 +17,12 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  devices: {
-    type: [DeviceSchema],
-    default: undefined
-  },
+  devices: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Device'
+    }
+  ],
   date: {
     type: Date,
     default: Date.now

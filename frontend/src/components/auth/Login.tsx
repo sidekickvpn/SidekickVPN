@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
-// import { auth, githubAuthProvider, googleAuthProvider } from '../../firebase';
-import { connect } from 'react-redux';
-import { loginUser, UserLogin } from '../../actions/auth';
 import { Redirect } from 'react-router';
+import AuthContext from '../../context/AuthContext';
 
-interface LoginProps {
-  loginUser: (userData: UserLogin) => void;
-  isAuthenticated: boolean;
-}
+class Login extends Component<{}> {
+  static contextType = AuthContext;
+  context!: React.ContextType<typeof AuthContext>;
 
-class Login extends Component<LoginProps> {
   state = {
     email: '',
     password: ''
@@ -22,14 +18,14 @@ class Login extends Component<LoginProps> {
   onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { email, password } = this.state;
-    await this.props.loginUser({ email, password });
+    await this.context.loginUser({ email, password });
   };
 
   render() {
-    if (this.props.isAuthenticated) {
+    const { email, password } = this.state;
+    if (this.context.isAuthenticated) {
       return <Redirect to="/dashboard" />;
     }
-    const { email, password } = this.state;
     return (
       <div className="row">
         <div className="col-md-6 offset-md-3">
@@ -65,31 +61,6 @@ class Login extends Component<LoginProps> {
                 </div>
                 <button className="btn btn-block btn-primary">Login</button>
               </form>
-              {/* <div className="card-body">
-                <p className="text-center lead">Sign in With</p>
-                <button
-                  className="btn btn-block btn-danger mb-2"
-                  onClick={() => auth.signInWithPopup(googleAuthProvider)}
-                >
-                  <i className="fab fa-google mr-2" />
-                  Google
-                </button>
-                <button className="btn btn-block btn-primary mb-2">
-                  <i className="fab fa-facebook mr-2" />
-                  Facebook
-                </button>
-                <button className="btn btn-block btn-info mb-2">
-                  <i className="fab fa-twitter mr-2" />
-                  Twitter
-                </button>
-                <button
-                  className="btn btn-block btn-dark"
-                  onClick={() => auth.signInWithPopup(githubAuthProvider)}
-                >
-                  <i className="fab fa-github mr-2" />
-                  GitHub
-                </button>
-              </div> */}
             </div>
           </div>
         </div>
@@ -98,11 +69,13 @@ class Login extends Component<LoginProps> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  isAuthenticated: state.auth.isAuthenticated
-});
+// const mapStateToProps = (state: any) => ({
+//   isAuthenticated: state.auth.isAuthenticated
+// });
 
-export default connect(
-  mapStateToProps,
-  { loginUser }
-)(Login);
+// export default connect(
+//   mapStateToProps,
+//   { loginUser }
+// )(Login);
+
+export default Login;
