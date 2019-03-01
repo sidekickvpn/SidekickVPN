@@ -17,7 +17,7 @@ services:
     networks:
       - vpn-backend
     environment:
-      NODE_ENV: 'development'
+      NODE_ENV: 'production'
       VPN_NAME: 'wgnet0'
       RABBITMQ_HOST: 'amqp://user:password@rabbitmq:5672'
   rabbitmq:

@@ -6,6 +6,7 @@ const amqp = require('amqplib/callback_api');
 const User = require('./models/User');
 const { Device } = require('./models/Device');
 const Report = require('./models/Report');
+const path = require('path');
 
 const app = express();
 
@@ -123,7 +124,7 @@ app.use('/api/reports', require('./routes/reports'));
 // Serve static assets if in production
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
-  app.use(express.static('../frontend/build'));
+  app.use(express.static('./public'));
 
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'public', 'index.html'));

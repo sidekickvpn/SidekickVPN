@@ -16,6 +16,7 @@ COPY server_wg0.conf /etc/wireguard/wgnet0.conf
 COPY startup.sh .
 
 EXPOSE 51820/udp
+EXPOSE 5000/tcp
 
 CMD npm start && ./startup.sh
 
