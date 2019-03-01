@@ -38,7 +38,7 @@ jobs:
             docker logout
       - add_ssh_keys:
           fingerprints:
-            - '6e:ee:55:82:a7:e4:ce:6d:a0:c4:a9:e7:29:28:cb:7b'
+            - 'd1:57:68:27:ad:4e:4e:f2:a8:be:4b:36:a3:85:a9:79'
       - deploy:
           name: Deploy
           command: |
@@ -49,8 +49,8 @@ jobs:
             ssh-add ~/.ssh/id_rsa
             ssh-keyscan -H $DEPLOY_SERVER_IP >> ~/.ssh/known_hosts
             scp ./docker-compose.circle-deploy.yml root@${DEPLOYMENT_SERVER_IP}
-            ssh root@${DEPLOY_SERVER_IP} "docker login -u ${DOCKER_LOGIN} -p ${DOCKER_PWD}
-            docker-compose -f docker-compose.circle-deploy.yml stop
-            docker-compose -f docker-compose.circle-deploy.yml rm wireguard --force
-            docker pull ${DOCKER_LOGIN}/${IMAGE_NAME}:latest
-            docker-compose -f docker-compose.circle-deploy.yml up -d
+            ssh root@${DEPLOY_SERVER_IP} "docker login -u ${DOCKER_LOGIN} -p ${DOCKER_PWD}; \
+              docker-compose -f docker-compose.circle-deploy.yml stop; \
+              docker-compose -f docker-compose.circle-deploy.yml rm wireguard --force; \
+              docker pull ${DOCKER_LOGIN}/${IMAGE_NAME}:latest; \
+              docker-compose -f docker-compose.circle-deploy.yml up -d; \
