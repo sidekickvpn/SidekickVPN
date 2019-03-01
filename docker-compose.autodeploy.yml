@@ -1,0 +1,38 @@
+version: '3'
+services:
+  wireguard:
+    build: .
+    ports:
+      - 51820:51820
+      - 5000:5000
+    volumes:
+      - $HOME/Documents/VPNTrafficAnalysis/node_server:/usr/app/node_server
+      - $HOME/Documents/VPNTrafficAnalysis/frontend:/usr/app/frontend
+    privileged: true
+    cap_add:
+      - net_admin
+      - sys_module
+    stdin_open: true
+    tty: true
+    depends_on:
+      - rabbitmq
+    networks:
+      - vpn-backend
+    environment:
+      NODE_ENV: 'production'
+      VPN_NAME: 'wgnet0'
+      RABBITMQ_HOST: 'amqp://user:password@rabbitmq:5672'
+  rabbitmq:
+    image: 'rabbitmq:3-management'
+    hostname: 'rabbitmq'
+    environment:
+      RABBITMQ_ERLANG_COOKIE: 'gsOM3sl8GIcNtz'
+      RABBITMQ_DEFAULT_USER: 'user'
+      RABBITMQ_DEFAULT_PASS: 'password'
+      RABBITMQ_DEFAULT_VHOST: '/'
+    labels:
+      NAME: 'rabbitmq'
+    networks:
+      - vpn-backend
+networks:
+  vpn-backend:
