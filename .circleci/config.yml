@@ -1,0 +1,50 @@
+version: 2
+jobs:
+  build:
+    branches:
+      only:
+        - master
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "node_server/package.json" }}-{{ checksum "frontend/package.json" }}
+            - v1-dependencies-
+      - run:
+          name: Install backend dependencies
+          command: npm --prefix node_server install && npm --prefix frontend install
+      # - tests:
+      #     name: Run Backend/Frontend tests
+      #     command: npm --prefix node_backend install
+      - save_cache:
+          paths:
+            - node_server/node_modules
+            - frontend/node_modules
+          key: v1-dependencies-{{ checksum "node_server/package.json" }}
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build and push Docker image
+          command: |
+            docker build -t $DOCKER_LOGIN/$IMAGE_NAME:latest
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            docker push ${DOCKER_LOGIN}/${IMAGE_NAME}:latest
+            docker logout
+      - deploy:
+          name: Deploy
+          command: |
+            mkdir -p ~/.ssh
+            echo "$DEPLOY_SERVER_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            eval "$(ssh-agent -s)"
+            ssh-add ~/.ssh/id_rsa
+            ssh-keyscan -H $DEPLOY_SERVER_IP >> ~/.ssh/known_hosts
+            scp ./docker-compose.circle-deploy.yml root@${DEPLOYMENT_SERVER_IP}
+            ssh root@${DEPLOY_SERVER_IP} "docker login -u ${DOCKER_LOGIN} -p ${DOCKER_PWD}
+            docker-compose -f docker-compose.circle-deploy.yml stop
+            docker-compose -f docker-compose.circle-deploy.yml rm wireguard --force
+            docker pull ${DOCKER_LOGIN}/${IMAGE_NAME}:latest
+            docker-compose -f docker-compose.circle-deploy.yml up -d
