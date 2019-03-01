@@ -19,7 +19,7 @@ RUN apk add -U dnsmasq tcpdump wireguard-tools bash iptables linux-headers git r
 
 # Copy Files
 COPY node_server ./node_server
-COPY frontend/dist ./frontend/dist
+COPY frontend/build ./public
 COPY server_wg0.conf /etc/wireguard/wgnet0.conf
 COPY startup.sh .
 
