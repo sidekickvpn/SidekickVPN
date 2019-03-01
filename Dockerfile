@@ -8,24 +8,18 @@ WORKDIR /usr/app
 # ARG BUILD_DATE
 
 RUN apk add -U dnsmasq tcpdump wireguard-tools bash iptables linux-headers git rabbitmq-server --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
-# RUN apt-get update && \
-#   apt-get install -y software-properties-common debconf-utils iptables curl && \
-#   add-apt-repository --yes ppa:wireguard/wireguard && \
-#   apt-get update && \
-#   echo resolvconf resolvconf/linkify-resolvconf boolean false | debconf-set-selections && \
-#   apt-get install -y iproute2 wireguard-dkms wireguard-tools curl resolvconf
 
 # Backend Dependencies
-COPY node_server/package.json node_server/package.json
-RUN npm --prefix node_server install
+# COPY node_server/package.json node_server/package.json
+# RUN npm --prefix node_server install
 
 # Frontend Dependencies
-COPY frontend/package.json frontend/package.json
-RUN npm --prefix frontend install
+# COPY frontend/package.json frontend/package.json
+# RUN npm --prefix frontend install
 
 # Copy Files
 COPY node_server ./node_server
-COPY frontend ./frontend
+COPY frontend/dist ./frontend/dist
 COPY server_wg0.conf /etc/wireguard/wgnet0.conf
 COPY startup.sh .
 
