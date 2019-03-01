@@ -42,10 +42,11 @@ jobs:
       - deploy:
           name: Deploy
           command: |
-            mkdir -p ~/.ssh
-            echo "$DEPLOY_SERVER_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
-            eval "$(ssh-agent -s)"
-            ssh-add ~/.ssh/id_rsa
-            ssh-keyscan -H $DEPLOY_SERVER_IP >> ~/.ssh/known_hosts
-            scp ./docker-compose.circle-deploy.yml root@${DEPLOY_SERVER_IP}:~/vpn-server/
+            ssh -o "StrictHostKeyChecking no" root@${DEPLOY_SERVER_IP} "echo Hello Digital Ocean >> ~/hello.txt"
+          # mkdir -p ~/.ssh
+          # echo "$DEPLOY_SERVER_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+          # chmod 600 ~/.ssh/id_rsa
+          # eval "$(ssh-agent -s)"
+          # ssh-add ~/.ssh/id_rsa
+          # ssh-keyscan -H $DEPLOY_SERVER_IP >> ~/.ssh/known_hosts
+          # scp ./docker-compose.circle-deploy.yml root@${DEPLOY_SERVER_IP}:~/vpn-server/
