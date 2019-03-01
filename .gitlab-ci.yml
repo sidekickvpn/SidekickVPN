@@ -1,14 +1,15 @@
 cache:
-  key: "$CI_BUILD_REF_NAME node:8-alpine"
+  key: "$CI_BUILD_REF_NAME node:10-alpine"
   paths:
-  - node_modules/
+    - node_server/node_modules/
+    - frontend/node_modules/
 stages:
   - build
   - release
   - deploy
 build:
   stage: build
-  image: node:8-alpine
+  image: node:10-alpine
   variables:
     NODE_ENV: "production"
     VPN_NAME: "wgnet0"
@@ -18,11 +19,11 @@ build:
     - npm --prefix node_server install
     - npm --prefix frontend install
   script:
-    - npm run build
+    - npm --prefix frontend run build
   artifacts:
     paths:
-     - server/
-     - public/
+     - node_server/
+     - frontend/dist
 release:
   stage: release
   image: docker:latest
