@@ -1,5 +1,5 @@
 cache:
-  key: "$CI_BUILD_REF_NAME node:10-alpine"
+  key: '$CI_BUILD_REF_NAME node:10-alpine'
   paths:
     - node_server/node_modules/
     - frontend/node_modules/
@@ -11,8 +11,7 @@ build:
   stage: build
   image: node:10-alpine
   variables:
-    NODE_ENV: "production"
-    VPN_NAME: "wgnet0"
+    NODE_ENV: 'development'
   before_script:
     - apk add --update bash
     - apk add --update git && rm -rf /tmp/* /var/cache/apk/*
@@ -22,31 +21,31 @@ build:
     - npm --prefix frontend run build
   artifacts:
     paths:
-     - node_server/
-     - frontend/dist
+      - node_server/
+      - frontend/dist/
 release:
   stage: release
   image: docker:latest
   only:
-    - "master"
+    - 'master'
   services:
     - docker:dind
   variables:
-    DOCKER_DRIVER: "overlay"
+    DOCKER_DRIVER: 'overlay'
   before_script:
-      - docker version
-      - "docker info"
-      - "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
-    script:
-      - "docker build -t ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest --pull ."
-      - "docker push ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest"
-    after_script:
-      - "docker logout ${CI_REGISTRY}"
+    - docker version
+    - 'docker info'
+    - 'docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY'
+  script:
+    - 'docker build -t ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest --pull .'
+    - 'docker push ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest'
+  after_script:
+    - 'docker logout ${CI_REGISTRY}'
 deploy:
   stage: deploy
   image: gitlab/dind:latest
   only:
-    - "master"
+    - 'master'
   environment: production
   services:
     - docker:dind
