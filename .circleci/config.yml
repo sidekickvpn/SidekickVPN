@@ -42,4 +42,4 @@ jobs:
       - deploy:
           name: Deploy
           command: |
-            scp ./docker-compose.circle-deploy.yml root@${DEPLOYMENT_SERVER_IP}:~/vpn-deploy
+            scp ./docker-compose.circle-deploy.yml root@${DEPLOYMENT_SERVER_IP}:~/
