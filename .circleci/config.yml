@@ -36,9 +36,9 @@ jobs:
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             docker push ${DOCKER_LOGIN}/${IMAGE_NAME}:latest
             docker logout
-      - add-ssh-keys:
-        fingerprints:
-          - '6e:ee:55:82:a7:e4:ce:6d:a0:c4:a9:e7:29:28:cb:7b'
+      - add_ssh_keys:
+          fingerprints:
+            - '6e:ee:55:82:a7:e4:ce:6d:a0:c4:a9:e7:29:28:cb:7b'
       - deploy:
           name: Deploy
           command: |
