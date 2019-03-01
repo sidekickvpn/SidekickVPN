@@ -44,7 +44,7 @@ jobs:
           command: |
             mkdir -p ~/.ssh
             chmod 600 ~/.ssh/id_rsa
-            cd vpn-server
+            cd ~/vpn-server
             scp -o "StrictHostKeyChecking no" -i ~/.ssh/id_rsa ./docker-compose.circle-deploy.yml root@${DEPLOY_SERVER_IP}:./
             ssh -o "StrictHostKeyChecking no" root@${DEPLOY_SERVER_IP} "docker login -u ${DOCKER_LOGIN} -p ${DOCKER_PWD}; \
               docker-compose -f docker-compose.circle-deploy.yml stop; \
