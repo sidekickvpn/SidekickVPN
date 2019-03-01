@@ -1,21 +1,19 @@
-version: '3'
+version: '2'
 services:
   wireguard:
     build: .
     ports:
       - 51820:51820
       - 5000:5000
-    volumes:
-      - $HOME/Documents/VPNTrafficAnalysis/node_server:/usr/app/node_server
-      - $HOME/Documents/VPNTrafficAnalysis/frontend:/usr/app/frontend
     privileged: true
     cap_add:
       - net_admin
       - sys_module
     stdin_open: true
     tty: true
+    restart: on-failure
     depends_on:
-      - rabbitmq
+      - 'rabbitmq'
     networks:
       - vpn-backend
     environment:
