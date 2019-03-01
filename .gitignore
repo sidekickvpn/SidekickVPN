@@ -5,5 +5,5 @@ venv
 .vscode
 *key
 node_modules
-*keys.js
+*dev-keys.js
 __pycache__
