@@ -44,7 +44,7 @@ jobs:
           command: |
             mkdir -p ~/.ssh
             chmod 600 ~/.ssh/id_rsa
-            scp -i ~/.ssh/id_rsa ./docker-compose.circle-deploy.yml root@${DEPLOY_SERVER_IP}:~/vpn-server/
+            scp -o "StrictHostKeyChecking no" -i ~/.ssh/id_rsa ./docker-compose.circle-deploy.yml root@${DEPLOY_SERVER_IP}:~/vpn-server/
             # ssh -o "StrictHostKeyChecking no" root@${DEPLOY_SERVER_IP} "echo Hello Digital Ocean >> ~/hello.txt"
           # echo "$DEPLOY_SERVER_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
           # eval "$(ssh-agent -s)"
