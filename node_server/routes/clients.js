@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const User = require('../models/User');
-const { Device } = require('../models/Device');
+const Device = require('../models/Device');
 
 // @route GET /client/
 // @desc Get peer info for peer with public_key passed in req.body
