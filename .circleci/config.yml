@@ -50,4 +50,4 @@ jobs:
               docker-compose -f docker-compose.circle-deploy.yml stop; \
               docker-compose -f docker-compose.circle-deploy.yml rm wireguard --force; \
               docker pull ${DOCKER_LOGIN}/${IMAGE_NAME}:latest; \
-              docker-compose -f docker-compose.circle-deploy.yml up -d;"
+              # docker-compose -f docker-compose.circle-deploy.yml up -d;"

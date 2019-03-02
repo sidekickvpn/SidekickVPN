@@ -3,9 +3,7 @@ const exec = require('child_process').exec;
 const mongoose = require('mongoose');
 const passport = require('passport');
 const amqp = require('amqplib/callback_api');
-const User = require('./models/User');
-const { Device } = require('./models/Device');
-const Report = require('./models/Report');
+const addReport = require('./utils/addReport');
 const path = require('path');
 
 const app = express();
@@ -14,7 +12,7 @@ const app = express();
 require('./config/passport')(passport);
 
 // DB Config
-const db = require('./config/keys').MongoURI;
+const db = require('./config/keys').MONGO_URI;
 
 // Connect to DB
 mongoose
@@ -38,28 +36,7 @@ amqp.connect(
         queue,
         async msg => {
           // TODO: Validation
-          try {
-            const { name, severity, message, publicKey } = JSON.parse(
-              msg.content.toString()
-            );
-            const device = await Device.findOne({ publicKey }).populate('User');
-
-            if (!device) throw err;
-
-            const newReport = new Report({
-              name,
-              severity,
-              message,
-              device: device.id,
-              user: device.user.id
-            });
-
-            const report = await newReport.save();
-
-            console.log(`Report Added: ${report}`);
-          } catch (e) {
-            console.log(e);
-          }
+          await addReport(JSON.parse(msg.content.toString()));
         },
         { noAck: true }
       );

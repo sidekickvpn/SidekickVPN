@@ -96,7 +96,7 @@ router.post('/login', (req, res, next) => {
         };
         jwt.sign(
           payload,
-          keys.secretOrKey,
+          keys.MONGO_SECRET,
           {
             expiresIn: 3600
           },

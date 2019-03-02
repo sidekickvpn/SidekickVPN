@@ -13,10 +13,10 @@ router.get(
   }),
   async (req, res) => {
     try {
-      const reports = await Report.find({}).populate({
-        path: 'User',
-        match: { _id: { $eq: req.user.id } }
-      });
+      console.log(req.user);
+      const reports = await Report.find({ user: req.user._id }).populate(
+        'User'
+      );
       res.status(200).json({ reports });
     } catch (e) {
       console.log(e);
