@@ -63,7 +63,8 @@ app.get(
     const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
     const VPN_PORT = process.env.VPN_PORT || '51820';
 
-    exec(`ip addr | awk '/inet/ { print $2 }'`, (err, stdout, stderr) => {
+    //ip addr | awk '/inet/ { print $2 }'
+    exec('hostname -I', (err, stdout, stderr) => {
       if (err) {
         console.error(err);
         res.status(500).json({ Error: 'Could not get server ip' });
@@ -71,10 +72,10 @@ app.get(
       }
       const ips = stdout.split('\n');
 
-      // const publicIp = `${ips[0]}:${VPN_PORT}`;
-      // const vpnIp = ips[ips.length - 2];
-      const publicIp = `${ips[2].slice(0, ips[2].length - 3)}:${VPN_PORT}`;
-      const vpnIp = ips[1].slice(0, ips[1].length - 3);
+      const publicIp = process.env.PUBLIC_IP || `${ips[0]}:${VPN_PORT}`;
+      const vpnIp = process.env.VPN_IP || ips[ips.length - 2];
+      // const publicIp = `${ips[2].slice(0, ips[2].length - 3)}:${VPN_PORT}`;
+      // const vpnIp = ips[1].slice(0, ips[1].length - 3);
 
       exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
         if (err) {
