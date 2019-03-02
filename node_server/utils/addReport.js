@@ -1,7 +1,10 @@
+const Device = require('../models/Device');
+const Report = require('../models/Report');
+
 // Add new report to database
 async function addReport(report) {
+  const { name, severity, message, publicKey } = report;
   try {
-    const { name, severity, message, publicKey } = report;
     const device = await Device.findOne({ publicKey }).populate('User');
 
     if (!device || !device.user) throw err;

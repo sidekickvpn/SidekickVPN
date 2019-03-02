@@ -72,7 +72,8 @@ app.get(
       }
       const ips = stdout.split('\n');
 
-      const publicIp = process.env.PUBLIC_IP || `${ips[0]}:${VPN_PORT}`;
+      const publicIp =
+        `${process.env.PUBLIC_IP}:${VPN_PORT}` || `${ips[0]}:${VPN_PORT}`;
       const vpnIp = process.env.VPN_IP || ips[ips.length - 2];
       // const publicIp = `${ips[2].slice(0, ips[2].length - 3)}:${VPN_PORT}`;
       // const vpnIp = ips[1].slice(0, ips[1].length - 3);

@@ -15,14 +15,14 @@ channel = connection.channel()
 channel.queue_declare(queue='reports', durable=False, auto_delete=True)
 
 # Replace with a public key for a device config associated with your account
-public_key = "UjjQu8S0rdUDx6UAurqjjd47TUsAAVEy4Yo1zdpvKRg="
+public_key = "IHbV9fROkzZnxlO4AOBgN4/kw01WO+cjL5wg7iZWrHg="
 
 for i in range(3):
     # TODO: Add random padding
     message = {
         "name": "SSH Login",
         "severity": "high",
-        "message": "Message #{}".format(i),
+        "message": "Test Message #{}".format(i),
         "publicKey": public_key  # Device Public Key
     }
 
