@@ -3,7 +3,6 @@ import { Device } from './types';
 
 interface DeviceItemProps {
   key: string;
-  deviceId: string;
   device: Device;
   onDeleteClick: (_id: string) => void;
 }

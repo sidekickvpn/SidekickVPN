@@ -1,7 +1,11 @@
 version: '2'
 services:
-  wireguard:
-    build: .
+  wireguard_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ~/Documents/VPNTrafficAnalysis/node_server:/usr/app/node_server
     ports:
       - 51820:51820
       - 5000:5000
@@ -17,7 +21,7 @@ services:
     networks:
       - vpn-backend
     environment:
-      NODE_ENV: 'production'
+      NODE_ENV: 'development'
       VPN_NAME: 'wgnet0'
       MONGO_URI: 'mongodb://luke:4wgtapi8@ds125225.mlab.com:25225/vpn-traffic-analysis'
       MONGO_SECRET: 'UjjQujjd7TUsAAV'

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import SideNav from './SideNav';
 import Summary from './Summary';
 import Devices from '../devices/Devices';
-import Reports from './Reports';
+import Reports from '../reports/Reports';
 import Billing from './Billing';
 import Subscription from './Subscription';
 

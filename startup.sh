@@ -23,10 +23,3 @@ echo "interace=wg0" >> /etc/dnsmasq.conf
 
 # Create/Enable wg0 interface
 wg-quick up wgnet0
-# Begin logging packets
-# tcpdump -n -X -i wg0 -w logs/wg0_packets.pcap
-
-while [ true ]
-do
-  sleep(10)
-done
