@@ -18,11 +18,13 @@ class Devices extends Component<{}, DevicesState> {
   }
 
   onDeleteClick = async (_id: string) => {
-    await axios.delete(`/api/clients/${_id}`);
-    const updatedDevices = await this.state.devices.filter(
-      device => device._id !== _id
-    );
-    this.setState({ devices: updatedDevices });
+    if (confirm('Are you sure?')) {
+      await axios.delete(`/api/clients/${_id}`);
+      const updatedDevices = await this.state.devices.filter(
+        device => device._id !== _id
+      );
+      this.setState({ devices: updatedDevices });
+    }
   };
 
   async componentDidMount() {
@@ -55,7 +57,6 @@ class Devices extends Component<{}, DevicesState> {
             {devices.map((device: Device) => (
               <DeviceItem
                 key={device._id}
-                deviceId={device._id}
                 device={device}
                 onDeleteClick={(_id: string) => this.onDeleteClick(_id)}
               />

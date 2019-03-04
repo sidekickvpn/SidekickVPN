@@ -16,7 +16,7 @@ COPY server_wg0.conf /etc/wireguard/wgnet0.conf
 COPY startup.sh .
 COPY loop.sh .
 
-EXPOSE 51820/udp
+EXPOSE 51821/udp
 EXPOSE 5000/tcp
 
 CMD ["./startup.sh", "&&", "npm", "start", "&&", "./loop.sh"]
