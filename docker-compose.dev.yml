@@ -23,6 +23,8 @@ services:
     environment:
       NODE_ENV: 'development'
       VPN_NAME: 'wgnet0'
+      VPN_IP: '192.168.10.1'
+      PUBLIC_IP: '138.197.136.154'
       MONGO_URI: 'mongodb://luke:4wgtapi8@ds125225.mlab.com:25225/vpn-traffic-analysis'
       MONGO_SECRET: 'UjjQujjd7TUsAAV'
       RABBITMQ_HOST: 'amqp://user:password@rabbitmq:5672'

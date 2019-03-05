@@ -64,36 +64,39 @@ app.get(
     const VPN_PORT = process.env.VPN_PORT || '51820';
 
     //ip addr | awk '/inet/ { print $2 }'
-    exec('hostname -I', (err, stdout, stderr) => {
+
+    // exec(
+    //   `ip addr | awk '/inet/ { print $2 }' || hostname -I`,
+    //   (err, stdout, stderr) => {
+    //     if (err) {
+    //       console.error(err);
+    //       res.status(500).json({ Error: 'Could not get server ip' });
+    //       return;
+    //     }
+    //     const ips = stdout.split('\n');
+
+    const publicIp = `${process.env.PUBLIC_IP}:${VPN_PORT}`; //|| `${ips[0]}:${VPN_PORT}`;
+    const vpnIp = process.env.VPN_IP; // || ips[ips.length - 2];
+    // const publicIp = `${ips[2].slice(0, ips[2].length - 3)}:${VPN_PORT}`;
+    // const vpnIp = ips[1].slice(0, ips[1].length - 3);
+
+    exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
       if (err) {
         console.error(err);
-        res.status(500).json({ Error: 'Could not get server ip' });
+        res.status(500).json({ Error: 'Could not get server public key' });
         return;
       }
-      const ips = stdout.split('\n');
-
-      const publicIp =
-        `${process.env.PUBLIC_IP}:${VPN_PORT}` || `${ips[0]}:${VPN_PORT}`;
-      const vpnIp = process.env.VPN_IP || ips[ips.length - 2];
-      // const publicIp = `${ips[2].slice(0, ips[2].length - 3)}:${VPN_PORT}`;
-      // const vpnIp = ips[1].slice(0, ips[1].length - 3);
-
-      exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
-        if (err) {
-          console.error(err);
-          res.status(500).json({ Error: 'Could not get server public key' });
-          return;
-        }
-        const publicKey = stdout.slice(0, stdout.length - 1);
-        res.status(200).json({
-          publicIp,
-          vpnIp,
-          vpnName: VPN_NAME,
-          publicKey
-        });
+      const publicKey = stdout.slice(0, stdout.length - 1);
+      res.status(200).json({
+        publicIp,
+        vpnIp,
+        vpnName: VPN_NAME,
+        publicKey
       });
     });
   }
+  //   );
+  // }
 );
 
 app.use('/api/clients', require('./routes/clients.js'));

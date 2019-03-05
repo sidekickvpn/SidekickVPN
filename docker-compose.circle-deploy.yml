@@ -16,8 +16,6 @@ services:
       - vpn-backend
     environment:
       NODE_ENV: 'production'
-      VPN_NAME: 'wgdocker'
-      VPN_PORT: '51821'
       VPN_IP: '192.168.10.1'
       PUBLIC_IP: '138.197.154.136'
       MONGO_URI: 'mongodb://luke:4wgtapi8@ds125225.mlab.com:25225/vpn-traffic-analysis'
