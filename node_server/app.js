@@ -51,6 +51,13 @@ app.use(express.urlencoded({ extended: false }));
 // Passport middleware
 app.use(passport.initialize());
 
+// @route GET /
+// @desc Test route
+// @access Public
+app.get('/', (req, res) => {
+  res.status(200).send({ welcome: 'welcome to the api' });
+});
+
 // @route GET /config
 // @desc Get public key
 // @access Private

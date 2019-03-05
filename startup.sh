@@ -1,18 +1,25 @@
 #!/bin/bash
 
 umask 077
-wg genkey | tee privatekey | wg pubkey > publickey
-publickey=$(cat publickey)
+
+# Check if Private key was given
+if [[ -z "${PRIVATE_KEY}" ]]; then
+  wg genkey | tee privatekey | wg pubkey > publickey
+  export PRIVATE_KEY=$(cat privatekey)
+  publickey=$(cat publickey)
+else
+  echo $PRIVATE_KEY | wg pubkey > publickey
+  publickey=$(cat publickey)
+fi
+
 sysctl -w net.ipv4.ip_forward=1
 
 # DEBUG
 echo Public Key: $publickey
 echo Hostname: $(hostname -i || ip addr | awk '/inet/ { print $2 }')
 
-# Add private key to wgnet0.conf
-echo "PrivateKey = "$(cat privatekey) >> /etc/wireguard/${VPN_NAME}.conf
-echo "ListenPort = "$VPN_PORT >> /etc/wireguard/${VPN_NAME}.conf
-echo "" >> /etc/wireguard/${VPN_NAME}.conf
+# Setup WireGuard conf file
+envsubst < server_wg0.conf > /etc/wireguard/${VPN_NAME}.conf
 
 echo "server=1.1.1.1" >> /etc/dnsmasq.conf
 echo "server=8.8.8.8" >> /etc/dnsmasq.conf

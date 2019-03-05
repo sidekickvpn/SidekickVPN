@@ -2,21 +2,25 @@ FROM node:10.15.1-alpine
 
 WORKDIR /usr/app
 
-RUN apk add -U dnsmasq tcpdump wireguard-tools bash iptables linux-headers git rabbitmq-server --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
+RUN apk add -U gettext dnsmasq tcpdump wireguard-tools bash iptables linux-headers git rabbitmq-server --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
+
+ARG VPN_NAME
+ARG VPN_PORT
+
+ENV VPN_NAME=$VPN_NAME
+ENV VPN_PORT=$VPN_PORT
 
 # Backend Dependencies
 COPY node_server/package.json node_server/package.json
-RUN npm install
+RUN npm --prefix node_server install
 
 
 # Copy Files
 COPY node_server ./node_server/
-# COPY frontend/build ./public
-COPY server_wg0.conf /etc/wireguard/wgnet0.conf
+COPY server_wg0.conf .
 COPY startup.dev.sh .
-# COPY loop.sh .
 
-EXPOSE 51820/udp
+EXPOSE 51821/udp
 EXPOSE 5000/tcp
 
 CMD ["./startup.dev.sh"]
