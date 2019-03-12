@@ -128,43 +128,16 @@ router.delete(
     session: false
   }),
   async (req, res) => {
-    const { id } = req.params;
-    const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
-
-    const { _id } = req.user;
     try {
-      // Ensure device belonds to user (ie. only delete if user owns the device)
-      const user = await User.findOne({
-        _id,
-        'devices._id': id
+      await Device.deleteOne({
+        _id: req.params.id,
+        user: req.user._id
       });
 
-      if (user) {
-        const device = user.devices.id(id);
-        const { publicKey } = device;
-
-        // Delete device
-        device.remove();
-        await user.save();
-        exec(
-          `wg set ${VPN_NAME} peer ${publicKey} remove`,
-          (err, stdout, stderr) => {
-            if (err) {
-              console.error(err);
-              res.status(500).json({ Error: err });
-              return;
-            }
-            console.log(`Peer ${publicKey} removed`);
-            res.status(200).json({ 'Device removed': publicKey });
-          }
-        );
-      } else {
-        res.status(404).json({
-          NotFound: 'No such device for given user'
-        });
-      }
+      res.status(200).json({ Deleted: 'Device removed' });
     } catch (e) {
       console.log(e);
+      res.status(500).json({ Error: 'Error deleting device' });
     }
   }
 );

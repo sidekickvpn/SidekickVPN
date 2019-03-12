@@ -54,8 +54,9 @@ export class AddDevice extends Component<any, AddDeviceState> {
     e.preventDefault();
     const { name, publicKey, vpnIp } = this.state;
 
-    // Get server info
     try {
+      await this.genConfig();
+
       // Add device to server
       await axios.post('/api/clients', {
         name,
@@ -246,24 +247,19 @@ PersistentKeepalive = 25
                       onChange={this.onChange}
                     />
                   </div>
-                  <button
-                    type="button"
-                    className="btn btn-primary btn-block"
-                    onClick={this.genConfig}
-                  >
-                    Generate Config
+                  <button type="submit" className="btn btn-primary btn-block">
+                    Submit
                   </button>
                 </div>
               </div>
 
               {configPreview}
-              <button
-                type="submit"
+              <Link
+                to="/dashboard/devices"
                 className="btn btn-success btn-block mt-2"
-                disabled={config.length === 0}
               >
-                Submit
-              </button>
+                Done
+              </Link>
             </form>
           </div>
         </div>
