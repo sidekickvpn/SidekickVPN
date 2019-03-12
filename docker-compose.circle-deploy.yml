@@ -5,7 +5,6 @@ services:
     ports:
       - 51821:51821
       - 5000:5000
-    privileged: true
     cap_add:
       - net_admin
       - sys_module
@@ -13,6 +12,7 @@ services:
     depends_on:
       - rabbitmq
     networks:
+      - host
       - vpn-backend
     environment:
       NODE_ENV: 'production'

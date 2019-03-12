@@ -27,15 +27,15 @@ jobs:
             - node_server/node_modules
             - frontend/node_modules
           key: v1-dependencies-{{ checksum "node_server/package.json" }}
-      # - setup_remote_docker:
-      #     docker_layer_caching: true
-      # - run:
-      #     name: Build and push Docker image
-      #     command: |
-      #       docker build -t $DOCKER_LOGIN/$IMAGE_NAME:latest --build-arg VPN_NAME=${VPN_NAME} --build-arg VPN_PORT=${VPN_PORT} .
-      #       echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-      #       docker push ${DOCKER_LOGIN}/${IMAGE_NAME}:latest
-      #       docker logout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build and push Docker image
+          command: |
+            docker build -t $DOCKER_LOGIN/$IMAGE_NAME:latest --build-arg VPN_NAME=${VPN_NAME} --build-arg VPN_PORT=${VPN_PORT} .
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            docker push ${DOCKER_LOGIN}/${IMAGE_NAME}:latest
+            docker logout
       - add_ssh_keys:
           fingerprints:
             - 'd1:57:68:27:ad:4e:4e:f2:a8:be:4b:36:a3:85:a9:79'
@@ -44,12 +44,10 @@ jobs:
           command: |
             mkdir -p ~/.ssh
             chmod 600 ~/.ssh/id_rsa
-            scp -o "StrictHostKeyChecking no" -i ~/.ssh/id_rsa ./auto-deploy.sh root@${DEPLOY_SERVER_IP}:~/vpntrafficanalysis/
-            ssh -o "StrictHostKeyChecking no" root@${DEPLOY_SERVER_IP} "cd vpntrafficanalysis && ./auto-deploy.sh ${DEPLOY_SERVER_IP} ${VPN_IP} ${MONGO_URI} ${MONGO_SECRET} ${VPN_NAME}"
-            # scp -o "StrictHostKeyChecking no" -i ~/.ssh/id_rsa ./docker-compose.circle-deploy.yml root@${DEPLOY_SERVER_IP}:~/vpn-server/
-            # ssh -o "StrictHostKeyChecking no" root@${DEPLOY_SERVER_IP} "docker login -u ${DOCKER_LOGIN} -p ${DOCKER_PWD}; \
-            #   cd ~/vpn-server
-            #   docker-compose -f docker-compose.circle-deploy.yml stop; \
-            #   docker-compose -f docker-compose.circle-deploy.yml rm wireguard --force; \
-            #   docker pull ${DOCKER_LOGIN}/${IMAGE_NAME}:latest; \
-              # docker-compose -f docker-compose.circle-deploy.yml up -d;"
+            scp -o "StrictHostKeyChecking no" -i ~/.ssh/id_rsa ./docker-compose.circle-deploy.yml root@${DEPLOY_SERVER_IP}:~/vpn-server/
+            ssh -o "StrictHostKeyChecking no" root@${DEPLOY_SERVER_IP} "docker login -u ${DOCKER_LOGIN} -p ${DOCKER_PWD}; \
+              cd ~/vpn-server
+              docker-compose -f docker-compose.circle-deploy.yml stop; \
+              docker-compose -f docker-compose.circle-deploy.yml rm wireguard --force; \
+              docker pull ${DOCKER_LOGIN}/${IMAGE_NAME}:latest; \
+              docker-compose -f docker-compose.circle-deploy.yml up -d;"
