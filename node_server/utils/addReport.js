@@ -7,7 +7,7 @@ async function addReport(report) {
   try {
     const device = await Device.findOne({ publicKey }).populate('User');
 
-    if (!device || !device.user) throw err;
+    if (!device || !device.user) throw new Error('No such device');
 
     const newReport = new Report({
       name,
