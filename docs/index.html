@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Sidekick VPN</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+      integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- NAVBAR START -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarTogglerDemo01"
+        aria-controls="navbarTogglerDemo01"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+        <a class="navbar-brand brand" href="#">
+          Sidekick
+          <span>VPN</span>
+        </a>
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#sidechannel">Sidechannel Reports</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#wireguard">Wireguard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#pricing">Pricing</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <!-- NAVBAR END -->
+
+    <section id="jumbotron" class="jumbotron text-light">
+      <h1 class="display-4 brand">Sidekick <span>VPN</span></h1>
+      <p class="lead">
+        A VPN Solution capable of giving reports on Sidechannel vulnerabilities
+      </p>
+    </section>
+
+    <section id="about">
+      <div class="container">
+        <h3 class="text-center">Why Sidekick?</h3>
+        <div class="row">
+          <div class="col-md">
+            <div class="d-flex">
+              <i class="fas fa-flag fa-3x mr-3"></i>
+              <h5>Sidechannel Reports</h5>
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="d-flex">
+              <i class="fas fa-cloud fa-3x mr-3"></i>
+              <h5>Your VPN is private and seperately hosted</h5>
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="d-flex">
+              <i class="fas fa-user-lock fa-3x mr-3"></i>
+              <div>
+                <h5>We will never collect/sell your data</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sidechannel">
+      <div class="container">
+        <h3 class="text-center">
+          Sidechannel Reports
+        </h3>
+        <p>
+          <i class="fas fa-angle-right mr-1"></i>
+          Although VPNs encrypt all your traffic, it can still be possible to
+          infer information.
+        </p>
+        <p>
+          <i class="fas fa-angle-right mr-1"></i>These are refered to as
+          sidechannel vulnerabilities and can anything from detect visiting a
+          slow site to determining the length of your ssh password
+        </p>
+        <p>
+          <i class="fas fa-angle-right mr-1"></i>Sidekick gives reports on the
+          detection of such vulnerabilities, so you are aware of them and can
+          work to fix them
+        </p>
+      </div>
+    </section>
+
+    <section id="wireguard">
+      <div class="container">
+        <h3 class="text-center">Why Wireguard?</h3>
+        <div class="row">
+          <div class="col-md">
+            <div class="d-flex">
+              <i class="fas fa-fire fa-3x mr-3"></i>
+              <h5>Faster than Open VPN</h5>
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="d-flex">
+              <i class="fas fa-lock fa-3x mr-3"></i>
+              <div>
+                <h5>More Modern Cryptography</h5>
+                <p>
+                  Strong Crytography algorithms ensure your data stays private
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing">
+      <div class="container">
+        <h3>Pricing</h3>
+        <table class="table table-borderless">
+          <thead>
+            <tr>
+              <th>Tier</th>
+              <th>Price</th>
+              <th>Privately Hosted VPN</th>
+              <th>Sidechannel Reports</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Basic</td>
+              <td>$30/month</td>
+              <td><i class="fas fa-check"></i></td>
+              <td><i class="fas fa-times"></i></td>
+            </tr>
+            <tr>
+              <td>Full</td>
+              <td>$45/month</td>
+              <td><i class="fas fa-check"></i></td>
+              <td><i class="fas fa-check"></i></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      &copy 2019
+    </footer>
+
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

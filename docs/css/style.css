@@ -1,0 +1,52 @@
+@import url("https://fonts.googleapis.com/css?family=Montserrat");
+@import url("https://fonts.googleapis.com/css?family=Audiowide");
+body {
+  font-family: 'Montserrat', sans-serif; }
+  body p {
+    font-size: 1.2rem; }
+
+.brand {
+  font-family: 'Audiowide';
+  color: #ffb86f !important; }
+  .brand span {
+    color: #aea4bf; }
+
+nav {
+  background: #755c89;
+  margin: auto;
+  border-bottom: 3px solid #ffb86f; }
+
+section {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 5em;
+  padding-bottom: 10em; }
+
+#jumbotron {
+  border-radius: 0;
+  background-image: url("../img/cables.jpg");
+  background-size: cover; }
+
+section:nth-of-type(odd) {
+  background: #f0e3ec; }
+
+section:nth-of-type(even) {
+  background: #f7f0f5; }
+
+section#about .container,
+section#wireguard .container {
+  text-align: center; }
+
+section#pricing .table {
+  background: white;
+  border-radius: 2px; }
+  section#pricing .table thead {
+    background: #755c89;
+    color: white;
+    border-bottom: 3px solid #ffb86f; }
+
+footer {
+  background: #755c89;
+  padding: 1em;
+  color: white;
+  text-align: center; }
