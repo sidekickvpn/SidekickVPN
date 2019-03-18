@@ -16,17 +16,17 @@ mongoose
   .then(() => console.log('Connected to DB'))
   .catch(err => console.log(err));
 
-describe('Reports', () => {
-  it('should add report to database', done => {
-    const newReport = {
-      name: 'test-device',
-      severity: 'high',
-      message: 'test report message',
-      publicKey: 'some-public-key'
-    };
-    addReport(newReport).then(report => {
-      expect(report).to.be.not.undefined;
-      done();
-    });
-  });
-});
+// describe('Reports', () => {
+//   it('should add report to database', done => {
+//     const newReport = {
+//       name: 'test-device',
+//       severity: 'high',
+//       message: 'test report message',
+//       publicKey: 'some-public-key'
+//     };
+//     addReport(newReport).then(report => {
+//       expect(report).to.be.not.undefined;
+//       done();
+//     });
+//   });
+// });

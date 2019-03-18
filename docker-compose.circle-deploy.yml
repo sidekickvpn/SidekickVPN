@@ -3,35 +3,41 @@ services:
   wireguard:
     image: lukebaal/vpntrafficanalysis:latest
     ports:
+      - 5672:5672
       - 51821:51821
       - 5000:5000
+    volumes:
+      - /etc/wireguard:/etc/wireguard
     cap_add:
       - net_admin
       - sys_module
     restart: on-failure
     depends_on:
       - rabbitmq
-    networks:
-      - host
-      - vpn-backend
+    network_mode: 'host'
+    # networks:
+    # - vpn-backend
     environment:
       NODE_ENV: 'production'
       VPN_IP: '192.168.10.1'
       PUBLIC_IP: '138.197.154.136'
       MONGO_URI: 'mongodb://luke:4wgtapi8@ds125225.mlab.com:25225/vpn-traffic-analysis'
       MONGO_SECRET: 'UjjQujjd7TUsAAV'
-      RABBITMQ_HOST: 'amqp://user:password@rabbitmq:5672'
+      RABBITMQ_HOST: 'amqp://test:qMBqoIE69a24vRutmXGgvolOMgfAst9a7ntaewC0I@localhost:5672'
+      # RABBITMQ_HOST: 'amqp://user:password@rabbitmq:5672'
   rabbitmq:
     image: 'rabbitmq:3-management'
+    ports:
+      - 5672:5672
     hostname: 'rabbitmq'
     environment:
       RABBITMQ_ERLANG_COOKIE: 'gsOM3sl8GIcNtz'
-      RABBITMQ_DEFAULT_USER: 'user'
-      RABBITMQ_DEFAULT_PASS: 'password'
+      RABBITMQ_DEFAULT_USER: 'test'
+      RABBITMQ_DEFAULT_PASS: 'qMBqoIE69a24vRutmXGgvolOMgfAst9a7ntaewC0I'
       RABBITMQ_DEFAULT_VHOST: '/'
     labels:
       NAME: 'rabbitmq'
-    networks:
-      - vpn-backend
-networks:
-  vpn-backend:
+#     networks:
+#       - vpn-backend
+# networks:
+#   vpn-backend:

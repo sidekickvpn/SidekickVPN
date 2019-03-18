@@ -12,19 +12,12 @@ else
   publickey=$(cat publickey)
 fi
 
-sysctl -w net.ipv4.ip_forward=1
-
 # DEBUG
 echo Public Key: $publickey
-echo Hostname: $(hostname -i || ip addr | awk '/inet/ { print $2 }')
+# echo Hostname: $(hostname -i || ip addr | awk '/inet/ { print $2 }')
 
 # Setup WireGuard conf file
 envsubst < server_wg0.conf > /etc/wireguard/${VPN_NAME}.conf
-
-echo "server=1.1.1.1" >> /etc/dnsmasq.conf
-echo "server=8.8.8.8" >> /etc/dnsmasq.conf
-echo "server=8.8.4.4" >> /etc/dnsmasq.conf
-echo "interace=${VPN_NAME}" >> /etc/dnsmasq.conf
 
 # Create/Enable wg0 interface
 wg-quick up $VPN_NAME
