@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "gulp sass",
-    "dev": "gulp sass:watch"
+    "dev": "gulp sass:watch",
+    "dist": "cp -r app/* ./"
   },
   "keywords": [],
   "author": "",
