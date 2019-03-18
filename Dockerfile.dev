@@ -23,5 +23,6 @@ COPY startup.dev.sh .
 EXPOSE 51821/udp
 EXPOSE 5000/tcp
 
+# CMD ["./startup.dev.sh"]
 CMD ["./startup.dev.sh"]
 
