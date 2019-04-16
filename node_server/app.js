@@ -2,49 +2,56 @@ const express = require('express');
 const exec = require('child_process').exec;
 const mongoose = require('mongoose');
 const passport = require('passport');
-const amqp = require('amqplib/callback_api');
-const addReport = require('./utils/addReport');
 const path = require('path');
 
 const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 
 // Passport Config
 require('./config/passport')(passport);
+
+// SocketIO Config
+require('./config/socketJwt')(io);
 
 // DB Config
 const db = require('./config/keys').MONGO_URI;
 
 // Connect to DB
-
 if (process.env.NODE_ENV !== 'test') {
 	mongoose
 		.connect(db, { useNewUrlParser: true })
 		.then(() => console.log('Connected to DB'))
 		.catch(err => console.log(err));
 
-	// Connect to RabbitMQ
-	amqp.connect(
-		process.env.RABBITMQ_HOST || 'amqp://localhost',
-		(err, connection) => {
-			if (err) {
-				console.log(err);
-			}
-			console.log('Connected to RabbitMQ channel');
-			connection.createChannel((err, channel) => {
-				const queue = process.env.QUEUE_NAME || 'reports';
+	// Setup SocketIO
+	io.on('connection', socket => {
+		console.log('Authentication passed!');
+	});
 
-				channel.assertQueue(queue, { durable: false, autoDelete: true });
-				channel.consume(
-					queue,
-					async msg => {
-						// TODO: Validation
-						await addReport(JSON.parse(msg.content.toString()));
-					},
-					{ noAck: true }
-				);
-			});
-		}
-	);
+	// Connect to RabbitMQ
+	// amqp.connect(
+	// 	process.env.RABBITMQ_HOST || 'amqp://localhost',
+	// 	(err, connection) => {
+	// 		if (err) {
+	// 			console.log(err);
+	// 		}
+	// 		console.log('Connected to RabbitMQ channel');
+	// 		connection.createChannel((err, channel) => {
+	// 			const queue = process.env.QUEUE_NAME || 'reports';
+
+	// 			channel.assertQueue(queue, { durable: false, autoDelete: true });
+	// 			channel.consume(
+	// 				queue,
+	// 				async msg => {
+	// 					// TODO: Validation
+	// 					await addReport(JSON.parse(msg.content.toString()));
+	// 				},
+	// 				{ noAck: true }
+	// 			);
+	// 		});
+	// 	}
+	// );
 }
 
 // Body Parser
@@ -117,6 +124,6 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+http.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
-module.exports = app;
+module.exports = http;

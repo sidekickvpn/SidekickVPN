@@ -1,0 +1,21 @@
+
+POST http://localhost:5000/api/users/login
+Content-Type: application/json
+
+{
+  "email": "john@gmail.com",
+  "password": "123456"
+}
+
+###
+
+POST http://localhost:5000/api/reports
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjYjVkMTNjMTVkMGUyMzEyMjJiYjcyZSIsImZpcnN0bmFtZSI6IkpvaG4iLCJsYXN0bmFtZSI6IkRvZSIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE1NTU0NTMxOTIsImV4cCI6MTU1NTQ1Njc5Mn0.bYif7GvDkJ-V2tO4SMNfhCzYWYTQjpQsNvJEuRgB-3c
+Content-Type: application/json
+
+{
+  "name": "SSH Password",
+  "message": "password entry detected",
+  "severity": "HIGH",
+  "publicKey": "some-pub"
+}

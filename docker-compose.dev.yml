@@ -1,14 +1,15 @@
 version: '2'
 services:
-  wireguard_dev:
+  sidekick-test:
     build:
       context: .
       dockerfile: Dockerfile.dev
       args:
-        VPN_NAME: 'wgdocker'
+        VPN_NAME: 'test'
         VPN_PORT: '51821'
-    volumes:
-      - ~/Documents/VPNTrafficAnalysis/node_server:/usr/app/node_server
+        testing: 'true'
+    # volumes:
+    #   - ~/Documents/VPNTrafficAnalysis/node_server:/usr/app/node_server
     ports:
       - 5672:5672
       - 51820:51820
@@ -19,7 +20,7 @@ services:
     stdin_open: true
     tty: true
     restart: on-failure
-    network_mode: 'host'
+    # network_mode: 'host'
     # depends_on:
     #   - 'rabbitmq'
     environment:
