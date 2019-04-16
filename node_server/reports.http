@@ -8,14 +8,17 @@ Content-Type: application/json
 }
 
 ###
+GET http://localhost:5000/api/clients/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjYjVkMTNjMTVkMGUyMzEyMjJiYjcyZSIsImZpcnN0bmFtZSI6IkpvaG4iLCJsYXN0bmFtZSI6IkRvZSIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE1NTU0NTU1MDIsImV4cCI6MTU1NTQ1OTEwMn0.sn0RXhPF4EAeHvGHpccVLIi1xKvxkUJj7WN4KejG83o
 
+###
 POST http://localhost:5000/api/reports
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjYjVkMTNjMTVkMGUyMzEyMjJiYjcyZSIsImZpcnN0bmFtZSI6IkpvaG4iLCJsYXN0bmFtZSI6IkRvZSIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE1NTU0NTMxOTIsImV4cCI6MTU1NTQ1Njc5Mn0.bYif7GvDkJ-V2tO4SMNfhCzYWYTQjpQsNvJEuRgB-3c
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjYjVkMTNjMTVkMGUyMzEyMjJiYjcyZSIsImZpcnN0bmFtZSI6IkpvaG4iLCJsYXN0bmFtZSI6IkRvZSIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE1NTU0NTU1MDIsImV4cCI6MTU1NTQ1OTEwMn0.sn0RXhPF4EAeHvGHpccVLIi1xKvxkUJj7WN4KejG83o
 Content-Type: application/json
 
 {
   "name": "SSH Password",
-  "message": "password entry detected",
-  "severity": "HIGH",
-  "publicKey": "some-pub"
+  "message": "password entry again",
+  "severity": "MED",
+  "publicKey": "MOfN7jTZBm63ulUa2kNx9mHuA+5LeFQkzPnIaylNQ20="
 }

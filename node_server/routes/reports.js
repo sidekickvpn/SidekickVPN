@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const Report = require('../models/Report');
 const Device = require('../models/Device');
+const { io } = require('../app');
 
 // @route GET /reports
 // @desc Get all reports for current user
@@ -74,20 +75,20 @@ router.post(
 		session: false
 	}),
 	async (req, res) => {
-		const { name, severity, message, publicKey } = req.body;
-		// console.log(req.body);
+		const { publicKey } = req.body;
 		try {
-			const res = await Device.findOne({ publicKey });
-			const device = res.data;
+			const device = await Device.findOne({ publicKey });
 			if (!device || !device.user) {
 				res.status(404).json({
 					'Not Found': `No device with public key ${publicKey} found for current user`
 				});
 				return;
 			}
-
-			res.status(200).json({ ...req.body });
+			console.log(io);
+			io.emit('reports', req.body);
+			res.status(200).json(req.body);
 		} catch (err) {
+			console.log(err);
 			res.status(500).json({ Error: 'Error adding report' });
 		}
 	}
