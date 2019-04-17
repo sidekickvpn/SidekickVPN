@@ -25,8 +25,10 @@ if (process.env.NODE_ENV !== 'test') {
 		.catch(err => console.log(err));
 
 	// Setup SocketIO
-	io.on('connection', socket => {
-		console.log('Authentication passed!');
+	io.on('connection', client => {
+		client.on('subscribeToReports', () => {
+			console.log('client is subscribing to reports');
+		});
 	});
 
 	// Connect to RabbitMQ
@@ -60,6 +62,12 @@ app.use(express.urlencoded({ extended: false }));
 
 // Passport middleware
 app.use(passport.initialize());
+
+// Socket IO middleware
+app.use((req, res, next) => {
+	req.io = io;
+	next();
+});
 
 // @route GET /config
 // @desc Get public key

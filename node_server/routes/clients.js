@@ -7,39 +7,39 @@ const Device = require('../models/Device');
 
 // @route GET /api/clients
 // @desc Get peer info for peer with public_key passed in req.body
-router.get(
-	'/',
-	passport.authenticate('jwt', {
-		session: false
-	}),
-	(req, res) => {
-		const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
-		const { publicKey } = req.body;
-		exec(`wg show ${VPN_NAME} dump`, (err, stdout, stderr) => {
-			if (err) {
-				console.error(err);
-				res.status(500).json({ Error: err });
-				return;
-			}
-			const peers = stdout.split('\n').map(peer => peer.split('\t'));
+// router.get(
+// 	'/',
+// 	passport.authenticate('jwt', {
+// 		session: false
+// 	}),
+// 	(req, res) => {
+// 		const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
+// 		const { publicKey } = req.body;
+// 		exec(`wg show ${VPN_NAME} dump`, (err, stdout, stderr) => {
+// 			if (err) {
+// 				console.error(err);
+// 				res.status(500).json({ Error: err });
+// 				return;
+// 			}
+// 			const peers = stdout.split('\n').map(peer => peer.split('\t'));
 
-			const peer = peers.find(peer => peer[0] === publicKey);
-			if (peer) {
-				res.status(200).json({
-					publicKey: peer[0],
-					endpoints: peer[2] === '(none)' ? null : peer[2],
-					allowedIps: peer[3],
-					latestHandshake: peer[4] === '0' ? null : peer[4],
-					received: parseInt(peer[5]),
-					sent: parseInt(peer[6]),
-					persistentKeepalive: peer[7]
-				});
-			} else {
-				res.status(404).json({ Error: 'Invalid Public Key' });
-			}
-		});
-	}
-);
+// 			const peer = peers.find(peer => peer[0] === publicKey);
+// 			if (peer) {
+// 				res.status(200).json({
+// 					publicKey: peer[0],
+// 					endpoints: peer[2] === '(none)' ? null : peer[2],
+// 					allowedIps: peer[3],
+// 					latestHandshake: peer[4] === '0' ? null : peer[4],
+// 					received: parseInt(peer[5]),
+// 					sent: parseInt(peer[6]),
+// 					persistentKeepalive: peer[7]
+// 				});
+// 			} else {
+// 				res.status(404).json({ Error: 'Invalid Public Key' });
+// 			}
+// 		});
+// 	}
+// );
 
 // @route GET /api/clients/all
 // @desc Get all devices for current client
@@ -126,12 +126,31 @@ router.delete(
 	}),
 	async (req, res) => {
 		try {
-			await Device.deleteOne({
+			const device = await Device.findOneAndRemove({
 				_id: req.params.id,
 				user: req.user._id
 			});
 
-			res.status(200).json({ Deleted: 'Device removed' });
+			User.update(
+				{ _id: req.user._id },
+				{ $pull: { devices: [req.params.id] } }
+			);
+
+			const { publicKey } = device;
+
+			// Add device to VPN server as a new peer
+			await exec(
+				`wg set ${process.env.VPN_NAME} peer ${publicKey} remove`,
+				(err, stdout, stderr) => {
+					if (err) {
+						console.error(err);
+						res.status(500).json({ Error: err });
+						return;
+					}
+					console.log(`Peer ${publicKey} removed`);
+					res.status(200).json({ Success: 'Device removed', publicKey });
+				}
+			);
 		} catch (e) {
 			console.log(e);
 			res.status(500).json({ Error: 'Error deleting device' });

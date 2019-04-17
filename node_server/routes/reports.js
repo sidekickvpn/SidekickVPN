@@ -84,8 +84,7 @@ router.post(
 				});
 				return;
 			}
-			console.log(io);
-			io.emit('reports', req.body);
+			req.io.emit('reports', req.body);
 			res.status(200).json(req.body);
 		} catch (err) {
 			console.log(err);
