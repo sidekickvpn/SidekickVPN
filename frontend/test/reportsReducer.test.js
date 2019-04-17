@@ -2,7 +2,7 @@ import { describe } from 'riteway';
 import {
 	reducer,
 	deleteClick,
-	addReports,
+	addReport,
 	defaultState,
 	deleteAllClick
 } from '../src/reducers/reportReducer';
@@ -74,7 +74,7 @@ describe('Reports Reducer', async assert => {
 	assert({
 		given: 'a new report to add',
 		should: 'add the report to state',
-		actual: reducer({ reports }, addReports(report)),
+		actual: reducer({ reports }, addReport(report)),
 		expected: { reports: reports.concat(report) }
 	});
 

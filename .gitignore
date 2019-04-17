@@ -8,3 +8,4 @@ node_modules
 *dev-keys.js
 __pycache__
 test-keys.js
+**/.env

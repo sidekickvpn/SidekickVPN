@@ -1,3 +1,4 @@
+const ADD_REPORT = 'reports/add';
 const DELETE_REPORT = 'reports/deleteClick';
 const DELETE_ALL_REPORTS = 'reports/deleteAllClick';
 
@@ -10,8 +11,8 @@ const deleteAllClick = () => ({
 	type: DELETE_ALL_REPORTS
 });
 
-const addReports = reports => ({
-	type: 'reports/addReport',
+const addReport = reports => ({
+	type: ADD_REPORT,
 	payload: reports
 });
 
@@ -21,14 +22,15 @@ export const defaultState = {
 
 const reducer = (state = defaultState, action = {}) => {
 	switch (action.type) {
-		case deleteClick().type:
+		case DELETE_REPORT:
 			return Object.assign({}, state, {
 				reports: state.reports.filter(report => report._id !== action.payload)
 			});
-		case deleteAllClick().type:
-			state.reports = {};
-			return state;
-		case addReports().type:
+		case DELETE_ALL_REPORTS:
+			return {
+				reports: []
+			};
+		case ADD_REPORT:
 			return Object.assign({}, state, {
 				reports: state.reports.concat(action.payload)
 			});
@@ -37,4 +39,4 @@ const reducer = (state = defaultState, action = {}) => {
 	}
 };
 
-export { reducer, deleteClick, deleteAllClick, addReports };
+export { reducer, deleteClick, deleteAllClick, addReport };

@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import getBadgeType from '../../utils/getBadgeType';
+import { dismissAlert } from '../../reducers/alertReducer';
+import AlertContext from '../../contexts/AlertContext';
 
 const Alert = ({ name, severity }) => {
+	const dispatch = useContext(AlertContext);
+
 	return (
 		<div
 			className="alert alert-secondary alert-dismissible fade show mx-auto"
@@ -15,9 +19,10 @@ const Alert = ({ name, severity }) => {
 			</span>
 			<button
 				type="button"
-				class="close"
+				className="close"
 				data-dismiss="alert"
 				aria-label="Close"
+				onClick={() => dispatch(dismissAlert({ name, severity }))}
 			>
 				<span aria-hidden="true">&times;</span>
 			</button>

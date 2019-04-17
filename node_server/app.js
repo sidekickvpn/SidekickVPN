@@ -29,31 +29,11 @@ if (process.env.NODE_ENV !== 'test') {
 		client.on('subscribeToReports', () => {
 			console.log('client is subscribing to reports');
 		});
+
+		client.on('newPythonReport', report => {
+			io.emit('newReport', report);
+		});
 	});
-
-	// Connect to RabbitMQ
-	// amqp.connect(
-	// 	process.env.RABBITMQ_HOST || 'amqp://localhost',
-	// 	(err, connection) => {
-	// 		if (err) {
-	// 			console.log(err);
-	// 		}
-	// 		console.log('Connected to RabbitMQ channel');
-	// 		connection.createChannel((err, channel) => {
-	// 			const queue = process.env.QUEUE_NAME || 'reports';
-
-	// 			channel.assertQueue(queue, { durable: false, autoDelete: true });
-	// 			channel.consume(
-	// 				queue,
-	// 				async msg => {
-	// 					// TODO: Validation
-	// 					await addReport(JSON.parse(msg.content.toString()));
-	// 				},
-	// 				{ noAck: true }
-	// 			);
-	// 		});
-	// 	}
-	// );
 }
 
 // Body Parser

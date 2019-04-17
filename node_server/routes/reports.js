@@ -3,7 +3,6 @@ const router = express.Router();
 const passport = require('passport');
 const Report = require('../models/Report');
 const Device = require('../models/Device');
-const { io } = require('../app');
 
 // @route GET /reports
 // @desc Get all reports for current user
@@ -39,7 +38,7 @@ router.delete(
 	async (req, res) => {
 		try {
 			await Report.deleteMany({ user: req.user._id });
-			res.status(200).json({ success: 'Successfully delete all reports' });
+			res.status(200).json({ success: 'Successfully deleted all reports' });
 		} catch (e) {
 			console.log(e);
 			res.status(500).json({ Error: 'Error deleting all reports' });
@@ -75,7 +74,7 @@ router.post(
 		session: false
 	}),
 	async (req, res) => {
-		const { publicKey } = req.body;
+		const { name, severity, message, publicKey } = req.body;
 		try {
 			const device = await Device.findOne({ publicKey });
 			if (!device || !device.user) {
@@ -84,8 +83,17 @@ router.post(
 				});
 				return;
 			}
-			req.io.emit('reports', req.body);
-			res.status(200).json(req.body);
+			const newReport = new Report({
+				name,
+				severity,
+				message,
+				device: device._id,
+				user: device.user._id
+			});
+
+			const report = await Report.create(newReport);
+			req.io.emit('reports', report);
+			res.status(201).json({ report });
 		} catch (err) {
 			console.log(err);
 			res.status(500).json({ Error: 'Error adding report' });

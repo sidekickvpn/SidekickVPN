@@ -9,8 +9,7 @@ const Report = ({ report, onDeleteClick }) => {
 				<div className="d-flex">
 					<h5 className="headline">{report.name}</h5>
 					<h5 className="text-muted ml-2">
-						{new Date(report.date).toLocaleDateString()} -{' '}
-						{new Date(report.date).toLocaleTimeString()}
+						{new Date(report.date).toLocaleString()}
 					</h5>
 				</div>
 

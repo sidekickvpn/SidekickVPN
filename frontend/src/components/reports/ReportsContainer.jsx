@@ -1,20 +1,29 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
-	reducer,
 	deleteClick,
 	deleteAllClick,
-	addReports
+	addReport
 } from '../../reducers/reportReducer';
 import Report from './Report';
 import axios from 'axios';
+import ReportContext from '../../contexts/ReportContext';
+import ReportStateContext from '../../contexts/ReportStateContext';
 
 const ReportsContainer = () => {
-	const [{ reports }, dispatch] = useReducer(reducer, reducer());
+	const reports = useContext(ReportStateContext);
+	const dispatch = useContext(ReportContext);
 
 	useEffect(() => {
 		axios
 			.get('/api/reports')
-			.then(res => dispatch(addReports(res.data.reports)))
+			.then(res => {
+				const ids = reports.map(report => report._id);
+				res.data.reports.forEach(report => {
+					if (!ids.includes(report._id)) {
+						dispatch(addReport(report));
+					}
+				});
+			})
 			.catch(err => console.log(err));
 	}, []);
 

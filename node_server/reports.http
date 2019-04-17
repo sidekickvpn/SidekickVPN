@@ -1,10 +1,22 @@
 
+POST http://localhost:5000/api/users/register
+Content-Type: application/json
+
+{
+  "firstname": "Report",
+  "lastname": "Bot",
+  "email": "admin@gmail.com",
+  "password": ""
+}
+
+###
+
 POST http://localhost:5000/api/users/login
 Content-Type: application/json
 
 {
-  "email": "john@gmail.com",
-  "password": "123456"
+  "email": "admin@gmail.com",
+  "password": ""
 }
 
 ###
@@ -13,7 +25,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjYjVkMTNjM
 
 ###
 POST http://localhost:5000/api/reports
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjYjVkMTNjMTVkMGUyMzEyMjJiYjcyZSIsImZpcnN0bmFtZSI6IkpvaG4iLCJsYXN0bmFtZSI6IkRvZSIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE1NTU1MTE4MTYsImV4cCI6MTU1NTUxNTQxNn0.vhDGX8yyoZfTBnym3jq9upIYSziqmX9n_v6B1v-uR30
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjYjVkMTNjMTVkMGUyMzEyMjJiYjcyZSIsImZpcnN0bmFtZSI6IkpvaG4iLCJsYXN0bmFtZSI6IkRvZSIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE1NTU1MjUxMDIsImV4cCI6MTU1NTUyODcwMn0.xzmP9ujc11XvDywRD__5BTDFZw88navzz6LF7LSXAas
 Content-Type: application/json
 
 {

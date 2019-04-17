@@ -4,7 +4,7 @@ import AuthContext from '../contexts/AuthContext';
 import AuthStateContext from '../contexts/AuthStateContext';
 import { logoutUser } from '../reducers/authReducer';
 
-const Navbar = () => {
+const Navbar = ({ alertCount }) => {
 	const { isAuthenticated, user } = useContext(AuthStateContext);
 	const dispatch = useContext(AuthContext);
 
@@ -25,7 +25,7 @@ const Navbar = () => {
 					<span className="navbar-toggler-icon" />
 				</button>
 				<div className="collapse navbar-collapse" id="navbarResponsive">
-					<div className="navbar-nav d-lg-none d-xl-none">
+					{/* <div className="navbar-nav d-lg-none d-xl-none">
 						{isAuthenticated ? (
 							<>
 								<NavLink to="/devices" className="nav-item nav-link">
@@ -34,13 +34,14 @@ const Navbar = () => {
 								</NavLink>
 								<NavLink to="/reports" className="nav-item nav-link">
 									<i className="fas fa-flag inline-icon" />
-									Reports
+									<span>Reports</span>
+									<span className="badge">{alertCount}</span>
 								</NavLink>
 							</>
 						) : (
 							''
 						)}
-					</div>
+					</div> */}
 					<div className="ml-auto d-lg-flex d-md-block">
 						<div className="navbar-nav">
 							{isAuthenticated ? (
@@ -51,7 +52,14 @@ const Navbar = () => {
 									</NavLink>
 									<NavLink to="/reports" className="nav-item nav-link">
 										<i className="fas fa-flag inline-icon" />
-										Reports
+										<span>Reports</span>
+										{alertCount > 0 ? (
+											<span className="badge badge-info ml-1">
+												{alertCount}
+											</span>
+										) : (
+											''
+										)}
 									</NavLink>
 									<Link className="nav-item nav-link" to="/devices">
 										<i className="fas fa-user inline-icon" />
@@ -70,9 +78,9 @@ const Navbar = () => {
 									<NavLink className="nav-item nav-link" to="/login">
 										Login
 									</NavLink>
-									<NavLink className="nav-item nav-link" to="/register">
+									{/* <NavLink className="nav-item nav-link" to="/register">
 										Register
-									</NavLink>
+									</NavLink> */}
 								</>
 							)}
 						</div>

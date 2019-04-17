@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useState } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 
@@ -10,7 +10,6 @@ import DevicesContainer from './components/devices/DevicesContainer';
 import Login from './components/Auth/Login';
 import AuthContext from './contexts/AuthContext';
 import AuthStateContext from './contexts/AuthStateContext';
-import Register from './components/Auth/Register';
 import Navbar from './components/Navbar';
 import Landing from './components/Landing';
 
@@ -19,22 +18,34 @@ import AddDevice from './components/devices/AddDevice';
 import { reportsSubscribe } from './utils/reportsSubscribe';
 import Alert from './components/common/Alert';
 import AlertContext from './contexts/AlertContext';
+import ReportContext from './contexts/ReportContext';
+import ReportStateContext from './contexts/ReportStateContext';
+import {
+	reducer as alertReducer,
+	addAlert,
+	defaultState
+} from './reducers/alertReducer';
+import { reducer as reportReducer, addReport } from './reducers/reportReducer';
 
 const App = () => {
 	const [auth, dispatch] = useReducer(reducer, reducer());
-	const [alert, setAlert] = useState({
-		name: '',
-		severity: '',
-		count: 0
-	});
+	const [alert, alertDispatch] = useReducer(alertReducer, defaultState);
+	const [{ reports }, reportDispatch] = useReducer(
+		reportReducer,
+		reportReducer()
+	);
 
 	useEffect(() => {
 		reportsSubscribe((err, report) => {
-			setAlert({
-				name: report.name,
-				severity: report.severity,
-				count: alert.count + 1
-			});
+			const { _id, name, severity } = report;
+			alertDispatch(
+				addAlert({
+					_id,
+					name,
+					severity
+				})
+			);
+			reportDispatch(addReport(report));
 		});
 	}, []);
 
@@ -62,18 +73,24 @@ const App = () => {
 		}
 	}, []);
 
+	const alerts = alert
+		? alert.alerts.map(alert => (
+				<Alert key={alert._id} name={alert.name} severity={alert.severity} />
+		  ))
+		: '';
+
 	return (
 		<AuthStateContext.Provider value={auth}>
 			<AuthContext.Provider value={dispatch}>
-				<AlertContext.Provider value={alert}>
+				<AlertContext.Provider value={alertDispatch}>
 					<Router>
 						<>
-							<Navbar />
+							<Navbar alertCount={alert.count} />
 							<div className="container mt-3">
-								<Alert name="Report One" severity="HIGH" />
+								{alerts}
 								<Switch>
 									<Route exact path="/" component={Landing} />
-									<Route exact path="/register" component={Register} />
+									{/* <Route exact path="/register" component={Register} /> */}
 									<Route exact path="/login" component={Login} />
 									<PrivateRoute
 										exact
@@ -85,11 +102,15 @@ const App = () => {
 										path="/devices"
 										component={DevicesContainer}
 									/>
-									<PrivateRoute
-										exact
-										path="/reports"
-										component={ReportsContainer}
-									/>
+									<ReportContext.Provider value={reportDispatch}>
+										<ReportStateContext.Provider value={reports}>
+											<PrivateRoute
+												exact
+												path="/reports"
+												component={ReportsContainer}
+											/>
+										</ReportStateContext.Provider>
+									</ReportContext.Provider>
 								</Switch>
 							</div>
 						</>

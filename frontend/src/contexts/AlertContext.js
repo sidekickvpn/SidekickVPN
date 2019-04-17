@@ -1,9 +1,8 @@
 import React from 'react';
+import { defaultState } from '../reducers/alertReducer';
 
 const AlertContext = React.createContext({
-	name: '',
-	message: '',
-	count: 0
+	dispatch: () => defaultState
 });
 
 export default AlertContext;
