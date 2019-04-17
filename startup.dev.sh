@@ -29,4 +29,8 @@ envsubst < server_wg0.conf > /etc/wireguard/${VPN_NAME}.conf
 wg-quick up $VPN_NAME
 
 # Start node server
-npm --prefix node_server run dev
+if [[ -z "$1" ]]; then
+  NODE_ENV=test npm test
+else
+  npm --prefix node_server run dev
+fi

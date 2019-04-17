@@ -2,10 +2,11 @@ FROM node:10.15.1-alpine
 
 WORKDIR /usr/app
 
-RUN apk add -U gettext dnsmasq tcpdump wireguard-tools bash iptables linux-headers git rabbitmq-server --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
+RUN apk add -U gettext dnsmasq wireguard-tools bash linux-headers git --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
 
 ARG VPN_NAME
 ARG VPN_PORT
+ARG testing
 
 ENV VPN_NAME=$VPN_NAME
 ENV VPN_PORT=$VPN_PORT
@@ -24,5 +25,5 @@ EXPOSE 51821/udp
 EXPOSE 5000/tcp
 
 # CMD ["./startup.dev.sh"]
-CMD ["./startup.dev.sh"]
+CMD ./startup.dev.sh ${testing}
 

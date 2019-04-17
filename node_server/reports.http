@@ -1,0 +1,36 @@
+
+POST http://localhost:5000/api/users/register
+Content-Type: application/json
+
+{
+  "firstname": "Report",
+  "lastname": "Bot",
+  "email": "admin@gmail.com",
+  "password": ""
+}
+
+###
+
+POST http://localhost:5000/api/users/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "password": ""
+}
+
+###
+GET http://localhost:5000/api/clients/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjYjVkMTNjMTVkMGUyMzEyMjJiYjcyZSIsImZpcnN0bmFtZSI6IkpvaG4iLCJsYXN0bmFtZSI6IkRvZSIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE1NTU0NTU1MDIsImV4cCI6MTU1NTQ1OTEwMn0.sn0RXhPF4EAeHvGHpccVLIi1xKvxkUJj7WN4KejG83o
+
+###
+POST http://localhost:5000/api/reports
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjYjVkMTNjMTVkMGUyMzEyMjJiYjcyZSIsImZpcnN0bmFtZSI6IkpvaG4iLCJsYXN0bmFtZSI6IkRvZSIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE1NTU1MjUxMDIsImV4cCI6MTU1NTUyODcwMn0.xzmP9ujc11XvDywRD__5BTDFZw88navzz6LF7LSXAas
+Content-Type: application/json
+
+{
+  "name": "SSH Password",
+  "message": "password entry again",
+  "severity": "MED",
+  "publicKey": "MOfN7jTZBm63ulUa2kNx9mHuA+5LeFQkzPnIaylNQ20="
+}
