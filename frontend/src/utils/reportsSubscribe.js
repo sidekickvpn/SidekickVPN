@@ -1,5 +1,5 @@
 import openSocket from 'socket.io-client';
-const socket = openSocket('http://localhost:5000', {
+const socket = openSocket('', {
 	query: `auth_token=${localStorage.jwtToken.slice(7)}`
 });
 
