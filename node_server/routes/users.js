@@ -8,63 +8,69 @@ const passport = require('passport');
 const User = require('../models/User');
 
 // @route GET api/users/register
-// @desc Register User
-// @access Public
-router.post('/register', (req, res) => {
-	const { firstname, lastname, email, password } = req.body;
-	let errors = [];
+// @desc Register a New user using an existing one
+// @access Private
+router.post(
+	'/register',
+	passport.authenticate('jwt', {
+		session: false
+	}),
+	(req, res) => {
+		const { firstname, lastname, email, password } = req.body;
+		let errors = [];
 
-	// Check required fields
-	if (!firstname || !lastname || !email || !password) {
-		errors.push({ msg: 'Please fill in all fields' });
+		// Check required fields
+		if (!firstname || !lastname || !email || !password) {
+			errors.push({ msg: 'Please fill in all fields' });
+		}
+
+		// Check if password is long enough
+		if (password.length < 6) {
+			errors.push({ msg: 'Password should be at least 6 characters' });
+		}
+
+		if (errors.length > 0) {
+			res.status(400).json({
+				errors
+			});
+		} else {
+			// Validation passed
+			User.findOne({ email }).then(user => {
+				if (user) {
+					errors.push({ msg: 'Email is already registered' });
+					res.status(400).json({
+						errors
+					});
+				} else {
+					const newUser = new User({
+						firstname,
+						lastname,
+						email,
+						password
+					});
+
+					// Hash Password
+					bcrypt.genSalt(10, (err, salt) =>
+						bcrypt.hash(password, salt, (err, hash) => {
+							if (err) throw err;
+
+							// Set password to hashed
+							newUser.password = hash;
+
+							// Save user
+							newUser
+								.save()
+								.then(user => {
+									res.status(201).json(user);
+								})
+								.catch(err => console.log(err));
+						})
+					);
+				}
+			});
+		}
 	}
-
-	// Check if password is long enough
-	if (password.length < 6) {
-		errors.push({ msg: 'Password should be at least 6 characters' });
-	}
-
-	if (errors.length > 0) {
-		res.status(400).json({
-			errors
-		});
-	} else {
-		// Validation passed
-		User.findOne({ email }).then(user => {
-			if (user) {
-				errors.push({ msg: 'Email is already registered' });
-				res.status(400).json({
-					errors
-				});
-			} else {
-				const newUser = new User({
-					firstname,
-					lastname,
-					email,
-					password
-				});
-
-				// Hash Password
-				bcrypt.genSalt(10, (err, salt) =>
-					bcrypt.hash(password, salt, (err, hash) => {
-						if (err) throw err;
-
-						// Set password to hashed
-						newUser.password = hash;
-
-						// Save user
-						newUser
-							.save()
-							.then(user => {
-								res.status(201).json(user);
-							})
-							.catch(err => console.log(err));
-					})
-				);
-			}
-		});
-	}
-});
+);
 
 // @route GET api/users/login
 // @desc Login user

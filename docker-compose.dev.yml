@@ -34,5 +34,5 @@ services:
       # RABBITMQ_HOST: 'amqp://user:password@rabbitmq:5672'
 #     networks:
 #       - vpn-backend
-# networks:
-#   vpn-backend:
+networks:
+  vpn-backend:

@@ -1,0 +1,28 @@
+version: '2'
+services:
+  db:
+    image: mongo
+    ports:
+      - 27017:27017
+  sidekick:
+    build:
+      context: .
+      args:
+        VPN_NAME: 'wgnet0'
+        VPN_PORT: '51820'
+    restart: on-failure
+    ports:
+      - 27017:27017
+      - 51820:51820
+      - 5000:5000
+    cap_add:
+      - net_admin
+      - sys_module
+    network_mode: 'host'
+    depends_on:
+      - db
+    environment:
+      NODE_ENV: 'production'
+      VPN_IP: '192.168.10.1'
+      PUBLIC_IP: '192.168.0.101'
+      MONGO_URI: 'mongodb://localhost:27017/sidekickvpn'

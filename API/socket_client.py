@@ -62,7 +62,7 @@ def main():
     "name": "Report One",
     "severity": "HIGH",
     "message": "This is a report from python",
-    "publicKey": "MOfN7jTZBm63ulUa2kNx9mHuA+5LeFQkzPnIaylNQ20="
+    "publicKey": "CHkifQtTewrDpRN3wpOfVuZ2udY+kLTfcSc99Rajol8="
   })
 
 
@@ -78,7 +78,7 @@ def on_disconnect():
 
 # Login to server using admin account (ADMIN_PWD is in .env folder, need to set it before running this script)
 r = requests.post('http://localhost:5000/api/users/login', data={
-  "email": "admin@gmail.com",
+  "email": "admin",
   "password": os.environ.get('ADMIN_PWD')
 })
 

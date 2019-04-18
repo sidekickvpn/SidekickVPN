@@ -36,18 +36,20 @@ const App = () => {
 	);
 
 	useEffect(() => {
-		reportsSubscribe((err, report) => {
-			const { _id, name, severity } = report;
-			alertDispatch(
-				addAlert({
-					_id,
-					name,
-					severity
-				})
-			);
-			reportDispatch(addReport(report));
-		});
-	}, []);
+		if (auth.isAuthenticated) {
+			reportsSubscribe((err, report) => {
+				const { _id, name, severity } = report;
+				alertDispatch(
+					addAlert({
+						_id,
+						name,
+						severity
+					})
+				);
+				reportDispatch(addReport(report));
+			});
+		}
+	}, [auth.isAuthenticated]);
 
 	useEffect(() => {
 		// Check for token

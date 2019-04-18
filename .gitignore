@@ -6,6 +6,7 @@ venv
 *key
 node_modules
 *dev-keys.js
-__pycache__
+**/__pycache__
 test-keys.js
 **/.env
+.directory
