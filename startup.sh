@@ -16,13 +16,6 @@ fi
 echo Public Key: $publickey
 # echo Hostname: $(hostname -i || ip addr | awk '/inet/ { print $2 }')
 
-# Setup DNS
-echo "server=1.1.1.1" >> /etc/dnsmasq.conf
-echo "server=8.8.8.8" >> /etc/dnsmasq.conf
-echo "server=8.8.4.4" >> /etc/dnsmasq.conf
-echo "interace=${VPN_NAME}" >> /etc/dnsmasq.conf
-
-
 # Setup WireGuard conf file
 envsubst < server_wg0.conf > /etc/wireguard/${VPN_NAME}.conf
 
@@ -46,5 +39,6 @@ sleep 10
 # Add admin account
 ./user-cli/bin/user-cli admin
 
+echo "Navigate to $PUBLIC_IP:$PORT on your devices to start using the application"
 # Start node server
 node app.js

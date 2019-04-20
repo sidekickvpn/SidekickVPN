@@ -2,13 +2,7 @@ FROM node:10.15.1-alpine
 
 WORKDIR /usr/app
 
-ARG VPN_NAME
-ARG VPN_PORT
-
-ENV VPN_NAME=$VPN_NAME
-ENV VPN_PORT=$VPN_PORT
-
-RUN apk add -U dnsmasq wireguard-tools bash iptables linux-headers git gettext --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
+RUN apk add -U wireguard-tools bash iptables ip6tables linux-headers gettext --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
 
 # Backend
 COPY node_server/package*.json ./

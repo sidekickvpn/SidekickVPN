@@ -89,7 +89,7 @@ const AddDevice = () => {
 
 	const genConfig = async () => {
 		const config = `[Interface]
-Address = ${vpnIp.value}
+Address = ${vpnIp.value}/24
 PrivateKey = ${privateKey.value}
 DNS = ${serverInfo.vpnIp}
 

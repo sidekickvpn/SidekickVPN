@@ -5,11 +5,7 @@ services:
     ports:
       - 27017:27017
   sidekick:
-    build:
-      context: .
-      args:
-        VPN_NAME: 'wgnet0'
-        VPN_PORT: '51820'
+    build: .
     restart: on-failure
     ports:
       - 27017:27017
@@ -23,6 +19,11 @@ services:
       - db
     environment:
       NODE_ENV: 'production'
-      VPN_IP: '192.168.10.1'
-      PUBLIC_IP: '192.168.0.101'
+      VPN_NET_INTERFACE: wlp2s0
+      VPN_NAME: wgnet0
+      VPN_PORT: 51820
+      VPN_IP: 192.168.10.1
+      PORT: 5000
+      VPN_IP_6: fd86:ea04:1115::1/64
+      PUBLIC_IP: 192.168.0.101
       MONGO_URI: 'mongodb://localhost:27017/sidekickvpn'
