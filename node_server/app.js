@@ -25,13 +25,18 @@ if (process.env.NODE_ENV !== 'test') {
 		.catch(err => console.log(err));
 
 	// Setup SocketIO
-	io.on('connection', client => {
+	io.of('sidekick').on('connection', client => {
 		client.on('subscribeToReports', () => {
 			console.log('client is subscribing to reports');
 		});
 
+		client.on('client_record_test', mode => {
+			console.log('record test from client, sending to python');
+			io.of('sidekick').emit('record_test', mode);
+		});
+
 		client.on('newPythonReport', report => {
-			io.emit('newReport', report);
+			io.of('sidekick').emit('newReport', report);
 		});
 	});
 }

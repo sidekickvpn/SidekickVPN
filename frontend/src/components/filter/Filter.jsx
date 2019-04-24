@@ -1,10 +1,35 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useContext } from 'react';
 import classnames from 'classnames';
+import SocketContext from '../../contexts/SocketContext';
 
-const Filter = props => {
+const Filter = () => {
 	const [recordingPos, setRecordingPos] = useState(false);
 	const [recordingNeg, setRecordingNeg] = useState(false);
+	const socket = useContext(SocketContext);
+
+	const handleRecordPos = () => {
+		if (recordingNeg) return;
+		if (!recordingPos) {
+			// Emit record start
+			socket.emit('client_record_test', 'start');
+		} else {
+			// Emit record stop
+			socket.emit('client_record_test', 'stop');
+		}
+		setRecordingPos(!recordingPos);
+	};
+
+	const handleRecordNeg = () => {
+		if (recordingPos) return;
+
+		setRecordingNeg(!recordingNeg);
+
+		// if (recordingNeg) {
+		// 	// Emit record start
+		// } else {
+		// 	// Emit record stop
+		// }
+	};
 
 	return (
 		<div className="card">
@@ -13,31 +38,49 @@ const Filter = props => {
 				<div className="btn-group">
 					<button
 						className={classnames('btn', {
-							'btn-warning': recordingPos,
+							'btn-danger': recordingPos,
 							'btn-success': !recordingPos
 						})}
+						onClick={handleRecordPos}
+						disabled={recordingNeg}
 					>
-						{recordingPos
-							? 'Stop Recording Positive Traffic'
-							: 'Record Positive Traffic'}
+						{recordingPos ? (
+							<>
+								<span>Stop Recording Positive Traffic</span>
+								<i className="fas fa-stop ml-1" />
+							</>
+						) : (
+							<>
+								<span>Record Positive Traffic</span>
+								<i className="fas fa-circle ml-1" />
+							</>
+						)}
 					</button>
 
 					<button
 						className={classnames('btn', {
-							'btn-warning': recordingNeg,
+							'btn-danger': recordingNeg,
 							'btn-success': !recordingNeg
 						})}
+						onClick={handleRecordNeg}
+						disabled={recordingPos}
 					>
-						{recordingNeg
-							? 'Stop Recording Negative Traffic'
-							: 'Record Negative Traffic'}
+						{recordingNeg ? (
+							<>
+								<span>Stop Recording Negative Traffic</span>
+								<i className="fas fa-stop ml-1" />
+							</>
+						) : (
+							<>
+								<span>Record Negative Traffic</span>
+								<i className="fas fa-circle ml-1" />
+							</>
+						)}
 					</button>
 				</div>
 			</div>
 		</div>
 	);
 };
-
-Filter.propTypes = {};
 
 export default Filter;

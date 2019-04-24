@@ -61,6 +61,10 @@ const Navbar = ({ alertCount }) => {
 											''
 										)}
 									</NavLink>
+									<NavLink to="/filter" className="nav-item nav-link">
+										<i className="fas fa-filter" />
+										Filter
+									</NavLink>
 									<Link className="nav-item nav-link" to="/devices">
 										<i className="fas fa-user inline-icon" />
 										{`${user.firstname} ${user.lastname}`}
