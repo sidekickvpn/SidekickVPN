@@ -26,15 +26,13 @@ wg-quick down $VPN_NAME
 wg-quick up $VPN_NAME
 
 # Generate mongo secret
-MONGO_SECRET=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 50 ; echo '')
-export MONGO_SECRET
-
-# Generate admin account password
-ADMIN_PWD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 200 ; echo '')
-export ADMIN_PWD
+export MONGO_SECRET=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 50 ; echo '')
 
 echo "Sleeping for 10 sec to let MongoDB startup"
 sleep 10
+
+# Delete old admin account if it exists
+./user-cli/bin/user-cli deleteAdmin
 
 # Add admin account
 ./user-cli/bin/user-cli admin

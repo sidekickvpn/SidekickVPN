@@ -6,6 +6,8 @@ const reportsSubscribe = cb => {
 	});
 	socket.on('newReport', reports => cb(null, reports));
 	socket.emit('subscribeToReports');
+
+	return socket;
 };
 
 export { reportsSubscribe };

@@ -13,7 +13,7 @@ apt-get update
 apt-get install wireguard dnsmasq ufw envsubst
 
 # Configure Firewall
-ufw allow 22/tcp # SHH
+ufw allow 22/tcp # SSH
 ufw allow 51820/udp # Wireguard
 ufw allow 5000/tcp # Application
 ufw deny 27017 # Ensure DB is localhost only
@@ -31,6 +31,11 @@ echo "interace=wgnet0" >> /etc/dnsmasq.conf
 # export MONGO_USER="sidekickvpndb"
 # MONGO_PWD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 50 ; echo '')
 # export MONGO_PWD
+
+# Generate admin account password
+export ADMIN_PWD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 200 ; echo '')
+
+echo $ADMIN_PWD
 
 # Substitute variables into docker-compose file
 envsubst < raw-docker-compose.yml > docker-compose.yml

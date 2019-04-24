@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 
@@ -26,8 +26,11 @@ import {
 	defaultState
 } from './reducers/alertReducer';
 import { reducer as reportReducer, addReport } from './reducers/reportReducer';
+import SocketContext from './contexts/SocketContext';
+import Filter from './components/filter/Filter';
 
 const App = () => {
+	const [socket, setSocket] = useState(null);
 	const [auth, dispatch] = useReducer(reducer, reducer());
 	const [alert, alertDispatch] = useReducer(alertReducer, defaultState);
 	const [{ reports }, reportDispatch] = useReducer(
@@ -37,7 +40,7 @@ const App = () => {
 
 	useEffect(() => {
 		if (auth.isAuthenticated) {
-			reportsSubscribe((err, report) => {
+			const socket = reportsSubscribe((err, report) => {
 				const { _id, name, severity } = report;
 				alertDispatch(
 					addAlert({
@@ -48,6 +51,8 @@ const App = () => {
 				);
 				reportDispatch(addReport(report));
 			});
+
+			setSocket(socket);
 		}
 	}, [auth.isAuthenticated]);
 
@@ -113,6 +118,10 @@ const App = () => {
 											/>
 										</ReportStateContext.Provider>
 									</ReportContext.Provider>
+
+									<SocketContext.Provider value={socket}>
+										<PrivateRoute exact path="filter" component={Filter} />
+									</SocketContext.Provider>
 								</Switch>
 							</div>
 						</>
