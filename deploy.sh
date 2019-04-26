@@ -1,10 +1,10 @@
 # Network Variables
-export VPN_NET_INTERFACE="wlp2s0"
+export VPN_NET_INTERFACE="eth0"
 export VPN_NAME="wgnet0"
 export VPN_PORT="51820"
 export VPN_IP="192.168.10.1"
 export PORT="5000"
-export PUBLIC_IP="192.168.0.101"
+export PUBLIC_IP="<public-ip>"
 
 # Install Wireguard, dnsmasq (DNS server), ufw (Firewall), and envsubst (To put above variables into docker-comose file)
 add-apt-repository ppa:wireguard/wireguard

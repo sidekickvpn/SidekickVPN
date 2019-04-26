@@ -67,14 +67,14 @@ program
 
 program
 	.command('add')
-	.option('-i, --interactive', 'Interactive Prompt')
+	.option('-a, --args', 'Use arguements instead of a prompt')
 	.option('-f, --firstname [firstname]', 'User Firstname')
 	.option('-l, --lastname [lastname]', 'UserLastname')
 	.option('-e, --email [email]', 'User Email')
 	.option('-p, --password [password]', 'User Password')
 	.description('Add user')
 	.action(cmd => {
-		if (cmd.interactive) {
+		if (!cmd.args) {
 			prompt(questions).then(answers => {
 				const { firstname, lastname, email, password, password2 } = answers;
 				if (password !== password2) {
