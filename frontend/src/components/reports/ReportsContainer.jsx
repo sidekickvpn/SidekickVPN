@@ -8,6 +8,11 @@ import Report from './Report';
 import axios from 'axios';
 import ReportContext from '../../contexts/ReportContext';
 import ReportStateContext from '../../contexts/ReportStateContext';
+import {
+	REPORT_DELETE_ALL_ROUTE,
+	REPORT_DELETE_BASEROUTE,
+	REPORT_GET_ALL_ROUTE
+} from '../../utils/routes';
 
 const ReportsContainer = () => {
 	const reports = useContext(ReportStateContext);
@@ -15,7 +20,7 @@ const ReportsContainer = () => {
 
 	useEffect(() => {
 		axios
-			.get('/api/reports')
+			.get(REPORT_GET_ALL_ROUTE)
 			.then(res => {
 				const ids = reports.map(report => report._id);
 				res.data.reports.forEach(report => {
@@ -29,7 +34,7 @@ const ReportsContainer = () => {
 
 	const onDeleteAllClick = async () => {
 		try {
-			await axios.delete('/api/reports/all');
+			await axios.delete(REPORT_DELETE_ALL_ROUTE);
 
 			dispatch(deleteAllClick());
 		} catch (err) {
@@ -39,7 +44,7 @@ const ReportsContainer = () => {
 
 	const onDeleteClick = async id => {
 		try {
-			await axios.delete(`/api/reports/${id}`);
+			await axios.delete(`${REPORT_DELETE_BASEROUTE}${id}`);
 
 			dispatch(deleteClick(id));
 		} catch (err) {

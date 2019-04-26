@@ -6,6 +6,7 @@ export VPN_IP="192.168.10.1"
 export PORT="5000"
 export PUBLIC_IP="<public-ip>"
 
+
 # Install Wireguard, dnsmasq (DNS server), ufw (Firewall), and envsubst (To put above variables into docker-comose file)
 add-apt-repository ppa:wireguard/wireguard
 apt-get update

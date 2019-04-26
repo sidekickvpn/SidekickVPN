@@ -107,7 +107,7 @@ app.get(
 	// }
 );
 
-app.use('/api/clients', require('./routes/clients.js'));
+app.use('/api/devices', require('./routes/devices.js'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/reports', require('./routes/reports'));
 

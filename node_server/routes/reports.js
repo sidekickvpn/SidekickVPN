@@ -4,7 +4,7 @@ const passport = require('passport');
 const Report = require('../models/Report');
 const Device = require('../models/Device');
 
-// @route GET /reports
+// @route GET /api/reports
 // @desc Get all reports for current user
 // @access Private
 router.get(
@@ -12,22 +12,26 @@ router.get(
 	passport.authenticate('jwt', {
 		session: false
 	}),
-	async (req, res) => {
-		try {
-			const reports = await Report.find({ user: req.user._id }, null, {
-				sort: {
-					date: -1
+	(req, res) => {
+		Report.find({ user: req.user._id }, null, {
+			sort: {
+				date: -1
+			}
+		})
+			.populate('device')
+			.exec((err, reports) => {
+				if (err) {
+					console.log(err);
+					res.status(500).json({ Error: 'Error getting reports' });
+				} else {
+					console.log(reports);
+					res.status(200).json({ reports });
 				}
-			}).populate('User');
-			res.status(200).json({ reports });
-		} catch (e) {
-			console.log(e);
-			res.status(500).json({ Error: 'Error getting reports' });
-		}
+			});
 	}
 );
 
-// @route DELETE /reports/all
+// @route DELETE /api/reports/all
 // @desc Delete all reports for current user
 // @access Private
 router.delete(
@@ -46,7 +50,7 @@ router.delete(
 	}
 );
 
-// @route DELETE /reports
+// @route DELETE /api/reports/:id
 // @desc Delete given report of current user
 // @access Private
 router.delete(
@@ -68,70 +72,37 @@ router.delete(
 // @route POST /reports
 // @desc Add a report to the database
 // @access Private
-router.post(
-	'/',
-	passport.authenticate('jwt', {
-		session: false
-	}),
-	async (req, res) => {
-		const { name, severity, message, publicKey } = req.body;
-		try {
-			const device = await Device.findOne({ publicKey });
-			if (!device || !device.user) {
-				res.status(404).json({
-					'Not Found': `No device with public key ${publicKey} found for current user`
-				});
-				return;
-			}
-			const newReport = new Report({
-				name,
-				severity,
-				message,
-				device: device._id,
-				user: device.user._id
-			});
-
-			const report = await Report.create(newReport);
-			req.io.emit('reports', report);
-			res.status(201).json({ report });
-		} catch (err) {
-			console.log(err);
-			res.status(500).json({ Error: 'Error adding report' });
-		}
-	}
-);
 // router.post(
-//   '/',
-//   passport.authenticate('jwt', {
-//     session: false
-//   }),
-//   async (req, res) => {
-//     const { name, severity, message, publicKey } = req.body;
+// 	'/',
+// 	passport.authenticate('jwt', {
+// 		session: false
+// 	}),
+// 	async (req, res) => {
+// 		const { name, severity, message, publicKey } = req.body;
+// 		try {
+// 			const device = await Device.findOne({ publicKey });
+// 			if (!device || !device.user) {
+// 				res.status(404).json({
+// 					'Not Found': `No device with public key ${publicKey} found for current user`
+// 				});
+// 				return;
+// 			}
+// 			const newReport = new Report({
+// 				name,
+// 				severity,
+// 				message,
+// 				device: device._id,
+// 				user: device.user._id
+// 			});
 
-//     try {
-//       const device = await Device.findOne({ publicKey });
-//       if (!device || !device.user) {
-//         res.status(404).json({
-//           'Not Found': `No device with public key ${publicKey} found for current user`
-//         });
-//         return;
-//       }
-
-//       const newReport = new Report({
-//         name,
-//         severity,
-//         message,
-//         device: device._id,
-//         user: device.user._id
-//       });
-
-//       const report = await Report.create(newReport);
-//       res.status(201).json({ report });
-//     } catch (e) {
-//       console.log(e);
-//       res.status(500).json({ Error: 'Error adding report' });
-//     }
-//   }
+// 			const report = await Report.create(newReport);
+// 			req.io.emit('reports', report);
+// 			res.status(201).json({ report });
+// 		} catch (err) {
+// 			console.log(err);
+// 			res.status(500).json({ Error: 'Error adding report' });
+// 		}
+// 	}
 // );
 
 module.exports = router;
