@@ -11,24 +11,24 @@ const Filter = () => {
 		if (recordingNeg) return;
 		if (!recordingPos) {
 			// Emit record start
-			socket.emit('client_record_test', 'start');
+			socket.emit('client_record_pos', 'start');
 		} else {
 			// Emit record stop
-			socket.emit('client_record_test', 'stop');
+			socket.emit('client_record_pos', 'stop');
 		}
 		setRecordingPos(!recordingPos);
 	};
 
 	const handleRecordNeg = () => {
 		if (recordingPos) return;
-
+		if (!recordingNeg) {
+			// Emit record start
+			socket.emit('client_record_neg', 'start');
+		} else {
+			// Emit record stop
+			socket.emit('client_record_neg', 'stop');
+		}
 		setRecordingNeg(!recordingNeg);
-
-		// if (recordingNeg) {
-		// 	// Emit record start
-		// } else {
-		// 	// Emit record stop
-		// }
 	};
 
 	return (

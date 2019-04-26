@@ -30,9 +30,14 @@ if (process.env.NODE_ENV !== 'test') {
 			console.log('client is subscribing to reports');
 		});
 
-		client.on('client_record_test', mode => {
-			console.log('record test from client, sending to python');
-			io.of('sidekick').emit('record_test', mode);
+		client.on('client_record_pos', mode => {
+			console.log('record pos from client, sending to python');
+			io.of('sidekick').emit('record_pos', mode);
+		});
+
+		client.on('client_record_neg', mode => {
+			console.log('record neg from client, sending to python');
+			io.of('sidekick').emit('record_neg', mode);
 		});
 
 		client.on('newPythonReport', report => {

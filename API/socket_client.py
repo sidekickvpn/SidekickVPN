@@ -1,11 +1,13 @@
 import socketio
 import requests
+import sys
 import os
 from pymongo import MongoClient
 from bson.json_util import dumps
 import json
 from datetime import datetime
 from scapy.all import sniff, wrpcap
+
 
 # Connect to MongoDB
 client = MongoClient('mongodb://localhost:27017')
@@ -72,6 +74,9 @@ def main():
 class SidekickNamespace(socketio.ClientNamespace):
   recording = False
 
+  def stop_filter(self, pkt):
+    return not self.recording
+
   def record_pkts(self, mode):
     """ 
     Start sniffing on WireGuard interface 
@@ -81,44 +86,42 @@ class SidekickNamespace(socketio.ClientNamespace):
               positive: Normal traffic
               negative: Potential sidechanels (ex. SSH password entry, etc.)
     """
-    interface = os.environ.get("VPN_NAME") if os.environ.get("VPN_NAME") else "wgnet0-default"
+    interface = os.environ.get("VPN_NAME") if os.environ.get("VPN_NAME") else "wgnet0"
     
     self.recording = True
     print(f"Mode: {mode} - Sniffing on {interface}")
-    pkts = sniff(iface=interface, stop_filter=not self.recording)
+    pkts = sniff(iface=interface, stop_filter=self.stop_filter, prn=lambda x: print(f"Recording: {self.recording} - {x}"))
     print("Finished sniffing...")
+    filename = "{}.pcap".format(mode)
     if mode == "positive":
-      wrpcap(mode, pkts)
+      wrpcap(filename, pkts)
     elif mode == "negative":
-      wrpcap(mode, pkts)
+      wrpcap(filename, pkts)
       
 
   def on_record_pos(self, mode):
-    print("Recording positive pkts...")
-    print(f"Mode: {mode}")
-
     if mode == "start" and self.recording == False:
-      record_pkts("positive")
+      print("Recording positive pkts...")
+      self.record_pkts("positive")
     else:
+      print("Stop recording positive pkts...")
       self.recording = False
 
   def on_record_neg(self, mode):
-    print("Recording negative pkts...")
-    print(f"Mode: {mode}")
-
     if mode == "start" and self.recording == False:
-      record_pkts("negative")
+      print("Recording negative pkts...")
+      # self.record_pkts("negative")
     else:
+      print("Stop recording negative pkts...")
       self.recording = False
 
 
   def on_record_test(self, mode):
     print(f"Testing...Mode {mode}")
 
-
     if mode == "start" and self.recording == False:
       print("Recording positive pkts...")
-      self.record_pkts("positive")
+      # self.record_pkts("positive")
     else:
       print("Stop recording positive pkts...")
       self.recording = False
@@ -133,16 +136,21 @@ class SidekickNamespace(socketio.ClientNamespace):
 sio.register_namespace(SidekickNamespace('/sidekick'))
 
 # Login to server using admin account (ADMIN_PWD is in .env folder, need to set it before running this script)
-r = requests.post('http://localhost:5000/api/users/login', data={
-  "email": "admin",
-  "password": os.environ.get('ADMIN_PWD')
-})
+r = None
+if os.environ.get('ADMIN_PWD'):
+  r = requests.post('http://localhost:5001/api/users/login', data={
+    "email": "admin@sidekick.com",
+    "password": os.environ.get('ADMIN_PWD')
+  })
+else:
+  print("ADMIN_PWD environment variable not set")
+  sys.exit(1)
 
 # Get token (removing 'Bearer ')
 token = r.json()['token'][7:]
 
 
 # Connect with socket.io using above token to authenticate
-sio.connect('http://localhost:5000?auth_token={}'.format(token))
+sio.connect('http://localhost:5001?auth_token={}'.format(token))
 
 sio.wait()

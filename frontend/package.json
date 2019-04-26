@@ -1,53 +1,53 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@std/esm": "^0.26.0",
-    "axios": "^0.18.0",
-    "classnames": "^2.2.6",
-    "jwt-decode": "^2.2.0",
-    "nyc": "^13.3.0",
-    "prop-types": "^15.7.2",
-    "react": "^16.8.4",
-    "react-dom": "^16.8.4",
-    "react-qr-svg": "^2.2.1",
-    "react-router-dom": "^4.3.1",
-    "react-scripts": "2.1.8",
-    "socket.io-client": "^2.2.0",
-    "tap-nirvana": "^1.1.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "nyc riteway -r @babel/register -r @babel/polyfill test/**/*.test.js | tap-nirvana",
-    "watch": "watch 'clear && npm run -s test | tap-nirvana'",
-    "ci_test": "riteway -r @babel/register -r @babel/polyfill test/**/*.test.js",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
-  "devDependencies": {
-    "@babel/core": "^7.3.4",
-    "@babel/node": "^7.2.2",
-    "@babel/polyfill": "^7.2.5",
-    "@babel/preset-env": "^7.3.4",
-    "@babel/preset-react": "^7.0.0",
-    "@babel/register": "^7.0.0",
-    "riteway": "^6.0.3",
-    "watch": "^1.0.2"
-  },
-  "nyc": {
-    "extension": [
-      ".jsx"
-    ]
-  },
-  "proxy": "http://localhost:5000"
+	"name": "frontend",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"@std/esm": "^0.26.0",
+		"axios": "^0.18.0",
+		"classnames": "^2.2.6",
+		"jwt-decode": "^2.2.0",
+		"nyc": "^13.3.0",
+		"prop-types": "^15.7.2",
+		"react": "^16.8.4",
+		"react-dom": "^16.8.4",
+		"react-qr-svg": "^2.2.1",
+		"react-router-dom": "^4.3.1",
+		"react-scripts": "2.1.8",
+		"socket.io-client": "^2.2.0",
+		"tap-nirvana": "^1.1.0"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "nyc riteway -r @babel/register -r @babel/polyfill test/**/*.test.js | tap-nirvana",
+		"watch": "watch 'clear && npm run -s test | tap-nirvana'",
+		"ci_test": "riteway -r @babel/register -r @babel/polyfill test/**/*.test.js",
+		"eject": "react-scripts eject"
+	},
+	"eslintConfig": {
+		"extends": "react-app"
+	},
+	"browserslist": [
+		">0.2%",
+		"not dead",
+		"not ie <= 11",
+		"not op_mini all"
+	],
+	"devDependencies": {
+		"@babel/core": "^7.3.4",
+		"@babel/node": "^7.2.2",
+		"@babel/polyfill": "^7.2.5",
+		"@babel/preset-env": "^7.3.4",
+		"@babel/preset-react": "^7.0.0",
+		"@babel/register": "^7.0.0",
+		"riteway": "^6.0.3",
+		"watch": "^1.0.2"
+	},
+	"nyc": {
+		"extension": [
+			".jsx"
+		]
+	},
+	"proxy": "http://localhost:5001"
 }
