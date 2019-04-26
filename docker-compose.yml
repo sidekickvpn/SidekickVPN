@@ -23,7 +23,6 @@ services:
   #     VPN_NAME: wgnet0
   #     VPN_PORT: 51820
   #     VPN_IP: 192.168.10.1
-  #     VPN_IP_6: fd86:ea04:1115::1/64
   #     PUBLIC_IP: 192.168.0.101
   #     MONGO_URI: 'mongodb://localhost:27017/sidekickvpn'
   #     ADMIN_PWD: 28B2wmVw0pR3GidQwNmX3tPEZGuQo2argqj1mZ6U8unf9OHMhw12ib7TyqyrjReF9m6b34eaTYVmQ7GqtTb5oV8rE9wFvyDE82a1GWRwfcQE3Vh59MYDqbwlpUzEU5DjoCaFwpuALpcqbuKcKxuL7DdVWmtvVSMoT5637ENhGS3twBQPenrNZn5wDba7qsIBhcnYshBH
