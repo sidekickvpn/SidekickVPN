@@ -26,18 +26,14 @@ sysctl -w net.ipv4.ip_forward=1
 echo "server=1.1.1.1" >> /etc/dnsmasq.conf
 echo "interace=wgnet0" >> /etc/dnsmasq.conf
 
-# Generate MongoDB password (Firewall blocks external connections, so this is an extra layer of protection)
-# export MONGO_USER="sidekickvpndb"
-# MONGO_PWD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 50 ; echo '')
-# export MONGO_PWD
-
 # Generate admin account password
 export ADMIN_PWD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 200 ; echo '')
 
-echo $ADMIN_PWD
-
 # Substitute variables into docker-compose file
 envsubst < raw-docker-compose.yml > docker-compose.yml
+
+# Alias for user-cli tool
+alias user-cli="docker exec -it vpntrafficanalysis_sidekick_1 ./user-cli/bin/user-cli"
 
 # Build Application image
 docker-compose build

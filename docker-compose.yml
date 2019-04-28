@@ -4,25 +4,45 @@ services:
     image: mongo
     ports:
       - 27017:27017
-  # sidekick:
-  #   build: .
-  #   restart: on-failure
-  #   ports:
-  #     - 27017:27017
-  #     - 51820:51820
-  #     - 5000:5000
-  #   cap_add:
-  #     - net_admin
-  #     - sys_module
-  #   network_mode: 'host'
-  #   depends_on:
-  #     - db
-  #   environment:
-  #     NODE_ENV: 'dev'
-  #     VPN_NET_INTERFACE: wlp2s0
-  #     VPN_NAME: wgnet0
-  #     VPN_PORT: 51820
-  #     VPN_IP: 192.168.10.1
-  #     PUBLIC_IP: 192.168.0.101
-  #     MONGO_URI: 'mongodb://localhost:27017/sidekickvpn'
-  #     ADMIN_PWD: 28B2wmVw0pR3GidQwNmX3tPEZGuQo2argqj1mZ6U8unf9OHMhw12ib7TyqyrjReF9m6b34eaTYVmQ7GqtTb5oV8rE9wFvyDE82a1GWRwfcQE3Vh59MYDqbwlpUzEU5DjoCaFwpuALpcqbuKcKxuL7DdVWmtvVSMoT5637ENhGS3twBQPenrNZn5wDba7qsIBhcnYshBH
+  sidekick:
+    build: .
+    restart: on-failure
+    ports:
+      - 27017:27017
+      - 51820:51820
+      - 5000:5000
+    cap_add:
+      - net_admin
+      - sys_module
+    network_mode: 'host'
+    depends_on:
+      - db
+    environment:
+      NODE_ENV: 'production'
+      VPN_NET_INTERFACE: wlp2s0
+      VPN_NAME: wgnet0
+      VPN_PORT: 51820
+      VPN_IP: 192.168.10.1
+      PUBLIC_IP: 192.168.0.101
+      MONGO_URI: 'mongodb://localhost:27017/sidekickvpn'
+      ADMIN_PWD: gjQk7wLPlTptZjXu0l9dbHOBgBY0j98DVrfbZ1zeyLlEKRg75nK9NVBZYjazKkDGELAvFGNkRGX0gmozut6oJMcCdYGBca7dtd3R6JiPFktRp3RGwukYpDXocfgJbjhcSz8dEqVpv3yxRwLLXQ50gllyNoipvZT9IsdGxmB1sJymwevCaCc0Jcgt1vfJs2olvnGy1kbd
+      PORT: 5000
+  python_api:
+    build:
+      context: ./API
+      dockerfile: API.dockerfile
+    ports:
+      - 5000:5000
+      - 27017:27017
+    network_mode: 'host'
+    depends_on:
+      - db
+      - sidekick
+    environment:
+      VPN_NET_INTERFACE: wlp2s0
+      VPN_NAME: wgnet0
+      VPN_PORT: 51820
+      VPN_IP: 192.168.10.1
+      MONGO_URI: 'mongodb://localhost:27017/sidekickvpn'
+      ADMIN_PWD: gjQk7wLPlTptZjXu0l9dbHOBgBY0j98DVrfbZ1zeyLlEKRg75nK9NVBZYjazKkDGELAvFGNkRGX0gmozut6oJMcCdYGBca7dtd3R6JiPFktRp3RGwukYpDXocfgJbjhcSz8dEqVpv3yxRwLLXQ50gllyNoipvZT9IsdGxmB1sJymwevCaCc0Jcgt1vfJs2olvnGy1kbd
+      PORT: 5000

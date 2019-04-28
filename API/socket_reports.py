@@ -76,7 +76,7 @@ def check_pkt(pkt):
   print(pkt.summary())
 
   # Assume all traffic is for the device using VPN IP of 192.168.10.16 (ie. replace with real IP in real code)
-  vpnIP = "192.168.10.12"
+  vpnIP = "192.168.10.15"
 
   # Fake traffic analysis, which has a 10% change of generating a HIGH severity report, 20% for a MED report, and 30% for a LOW
   rand = random.random()
@@ -124,7 +124,7 @@ sio.register_namespace(SidekickNamespace('/sidekick'))
 # Login to server using admin account (ADMIN_PWD is in .env folder, need to set it before running this script)
 r = None
 if os.environ.get('ADMIN_PWD'):
-  r = requests.post('http://localhost:5001/api/users/login', data={
+  r = requests.post('http://localhost:{}/api/users/login'.format(os.environ.get('PORT')), data={
     "email": "admin@sidekick.com",
     "password": os.environ.get('ADMIN_PWD')
   })
@@ -137,6 +137,6 @@ token = r.json()['token'][7:]
 
 
 # Connect with socket.io using above token to authenticate
-sio.connect('http://localhost:5001?auth_token={}'.format(token))
+sio.connect('http://localhost:{}?auth_token={}'.format(os.environ.get('PORT'), token))
 
 sio.wait()

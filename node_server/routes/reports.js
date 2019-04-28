@@ -24,7 +24,6 @@ router.get(
 					console.log(err);
 					res.status(500).json({ Error: 'Error getting reports' });
 				} else {
-					console.log(reports);
 					res.status(200).json({ reports });
 				}
 			});

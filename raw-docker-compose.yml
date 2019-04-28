@@ -10,7 +10,7 @@ services:
     ports:
       - 27017:27017
       - 51820:51820
-      - 5000:5000
+      - ${PORT}:${PORT}
     cap_add:
       - net_admin
       - sys_module
@@ -23,7 +23,26 @@ services:
       VPN_NAME: ${VPN_NAME}
       VPN_PORT: ${VPN_PORT}
       VPN_IP: ${VPN_IP}
-      VPN_IP_6: ${VPN_IP_6}
       PUBLIC_IP: ${PUBLIC_IP}
       MONGO_URI: 'mongodb://localhost:27017/sidekickvpn'
       ADMIN_PWD: ${ADMIN_PWD}
+      PORT: ${PORT}
+  python_api:
+    build:
+      context: ./API
+      dockerfile: API.dockerfile
+    ports:
+      - ${PORT}:${PORT}
+      - 27017:27017
+    network_mode: 'host'
+    depends_on:
+      - db
+      - sidekick
+    environment:
+      VPN_NET_INTERFACE: ${VPN_NET_INTERFACE}
+      VPN_NAME: ${VPN_NAME}
+      VPN_PORT: ${VPN_PORT}
+      VPN_IP: ${VPN_IP}
+      MONGO_URI: 'mongodb://localhost:27017/sidekickvpn'
+      ADMIN_PWD: ${ADMIN_PWD}
+      PORT: ${PORT}

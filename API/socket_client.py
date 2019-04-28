@@ -37,7 +37,7 @@ class SidekickNamespace(socketio.ClientNamespace):
     print("Finished sniffing...")
     
     
-    filename = "{}.pcap".format(mode)
+    filename = "pcaps/{}.pcap".format(mode)
     if mode == "positive":
       wrpcap(filename, pkts)
     elif mode == "negative":
@@ -71,7 +71,7 @@ sio.register_namespace(SidekickNamespace('/sidekick'))
 # Login to server using admin account (ADMIN_PWD is in .env folder, need to set it before running this script)
 r = None
 if os.environ.get('ADMIN_PWD'):
-  r = requests.post('http://localhost:5001/api/users/login', data={
+  r = requests.post('http://localhost:{}/api/users/login'.format(os.environ.get('PORT')), data={
     "email": "admin@sidekick.com",
     "password": os.environ.get('ADMIN_PWD')
   })
@@ -84,6 +84,6 @@ token = r.json()['token'][7:]
 
 
 # Connect with socket.io using above token to authenticate
-sio.connect('http://localhost:5001?auth_token={}'.format(token))
+sio.connect('http://localhost:{}?auth_token={}'.format(os.environ.get('PORT'), token))
 
 sio.wait()
