@@ -30,7 +30,6 @@ services:
   python_api:
     build:
       context: ./API
-      dockerfile: API.dockerfile
     ports:
       - ${PORT}:${PORT}
       - 27017:27017

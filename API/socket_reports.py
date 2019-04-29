@@ -12,8 +12,8 @@ import random
 
 # Connect to MongoDB
 client = MongoClient('mongodb://localhost:27017')
-if (os.environ.get('MONGO_URI')):
-  client = os.environ.get('MONGO_URI')
+# if (os.environ.get('MONGO_URI')):
+#   client = os.environ.get('MONGO_URI')
 
 db = client.sidekickvpn
 
@@ -76,11 +76,11 @@ def check_pkt(pkt):
   print(pkt.summary())
 
   # Assume all traffic is for the device using VPN IP of 192.168.10.16 (ie. replace with real IP in real code)
-  vpnIP = "192.168.10.15"
+  vpnIP = "192.168.10.17"
 
   # Fake traffic analysis, which has a 10% change of generating a HIGH severity report, 20% for a MED report, and 30% for a LOW
   rand = random.random()
-  if (rand < 0.1):
+  if (rand < 0.01):
     # Generate HIGH report
     sendReport({
       "name": "Report {}".format(rand*100),
@@ -88,7 +88,7 @@ def check_pkt(pkt):
       "message": "This is a HIGH report from python. {}".format(pkt.summary()),
       "vpnIp": vpnIP
     })
-  elif (rand >= 0.1 and rand < 0.3):
+  elif (rand >= 0.01 and rand < 0.03):
     # Generate MED report
     sendReport({
       "name": "Report {}".format(rand*100),
@@ -96,7 +96,7 @@ def check_pkt(pkt):
       "message": "This is a MED report from python. {}".format(pkt.summary()),
       "vpnIp": vpnIP
     })
-  elif (rand >= 0.3 and rand < 0.6):
+  elif (rand >= 0.03 and rand < 0.06):
     # Generate LOW report
     sendReport({
       "name": "Report {}".format(rand*100),
@@ -125,7 +125,7 @@ sio.register_namespace(SidekickNamespace('/sidekick'))
 r = None
 if os.environ.get('ADMIN_PWD'):
   r = requests.post('http://localhost:{}/api/users/login'.format(os.environ.get('PORT')), data={
-    "email": "admin@sidekick.com",
+    "email": "admin",
     "password": os.environ.get('ADMIN_PWD')
   })
 else:

@@ -12,7 +12,7 @@ const Navbar = ({ alertCount }) => {
 		<div className="navbar navbar-expand-lg navbar-dark bg-primary">
 			<div className="container">
 				<Link to="/" className="navbar-brand">
-					VPN Traffic Analysis
+					SidekickVPN
 				</Link>
 				<button
 					className="navbar-toggler"

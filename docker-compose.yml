@@ -23,14 +23,13 @@ services:
       VPN_NAME: wgnet0
       VPN_PORT: 51820
       VPN_IP: 192.168.10.1
-      PUBLIC_IP: 192.168.0.101
+      PUBLIC_IP: 10.124.27.83
       MONGO_URI: 'mongodb://localhost:27017/sidekickvpn'
-      ADMIN_PWD: gjQk7wLPlTptZjXu0l9dbHOBgBY0j98DVrfbZ1zeyLlEKRg75nK9NVBZYjazKkDGELAvFGNkRGX0gmozut6oJMcCdYGBca7dtd3R6JiPFktRp3RGwukYpDXocfgJbjhcSz8dEqVpv3yxRwLLXQ50gllyNoipvZT9IsdGxmB1sJymwevCaCc0Jcgt1vfJs2olvnGy1kbd
+      ADMIN_PWD: zniFa4ftBu4fcDfN2yibXM3scbBExrxsyUkcjzCrG0LtLPwxwg6168ZH9w8voMelPhBlLggRyr5AW1TdbkQ9hIV9HDTYn3E0HgA9NrK0rQEoUeKRYGWryiHiw7SAcueVZr1Le4jrvhyYBP3sEe5pY2YSDQyIMXwOAh1y7KhQJzDAmRqm8SlviIf4A6catrVWpwO2Irwo
       PORT: 5000
   python_api:
     build:
       context: ./API
-      dockerfile: API.dockerfile
     ports:
       - 5000:5000
       - 27017:27017
@@ -44,5 +43,5 @@ services:
       VPN_PORT: 51820
       VPN_IP: 192.168.10.1
       MONGO_URI: 'mongodb://localhost:27017/sidekickvpn'
-      ADMIN_PWD: gjQk7wLPlTptZjXu0l9dbHOBgBY0j98DVrfbZ1zeyLlEKRg75nK9NVBZYjazKkDGELAvFGNkRGX0gmozut6oJMcCdYGBca7dtd3R6JiPFktRp3RGwukYpDXocfgJbjhcSz8dEqVpv3yxRwLLXQ50gllyNoipvZT9IsdGxmB1sJymwevCaCc0Jcgt1vfJs2olvnGy1kbd
+      ADMIN_PWD: zniFa4ftBu4fcDfN2yibXM3scbBExrxsyUkcjzCrG0LtLPwxwg6168ZH9w8voMelPhBlLggRyr5AW1TdbkQ9hIV9HDTYn3E0HgA9NrK0rQEoUeKRYGWryiHiw7SAcueVZr1Le4jrvhyYBP3sEe5pY2YSDQyIMXwOAh1y7KhQJzDAmRqm8SlviIf4A6catrVWpwO2Irwo
       PORT: 5000
