@@ -1,6 +1,7 @@
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import setAuthToken from '../utils/setAuthToken';
+import { USER_LOGIN_ROUTE } from '../utils/routes';
 
 const LOGIN_USER = 'auth/loginUser';
 const LOGOUT_USER = 'auth/logoutUser';
@@ -8,7 +9,7 @@ const GET_USER = 'auth/getUser';
 
 const loginUser = async (dispatch, userData) => {
 	try {
-		const res = await axios.post('/api/users/login', userData);
+		const res = await axios.post(USER_LOGIN_ROUTE, userData);
 		// Save token to local storage
 		const { token } = res.data;
 		localStorage.setItem('jwtToken', token);
@@ -28,7 +29,6 @@ const loginUser = async (dispatch, userData) => {
 
 const logoutUser = dispatch => {
 	// Log user out
-	console.log('logged out');
 	localStorage.removeItem('jwtToken');
 	setAuthToken('');
 	dispatch({ type: LOGOUT_USER });

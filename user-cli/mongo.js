@@ -47,9 +47,12 @@ const addUser = userData => {
 };
 
 const deleteUser = email => {
-	User.findOneAndRemove({ email }).then(user => {
-		console.info(`User ${user} deleted`);
-	});
+	User.findOneAndRemove({ email })
+		.then(user => {
+			console.info(`User ${user} deleted`);
+			mongoose.connection.close();
+		})
+		.catch(err => console.log(err));
 };
 
 module.exports = { addUser, deleteUser };

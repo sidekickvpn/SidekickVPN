@@ -21,9 +21,14 @@ const Report = ({ report, onDeleteClick }) => {
 					<i className="fas fa-times" />
 				</button>
 			</div>
+
 			<span className={`badge badge-${getBadgeType(report.severity)}`}>
 				{report.severity}
 			</span>
+			<h5 className="text-muted">
+				Device: {report.device.name} - VPN IP: {report.device.vpnIp}
+			</h5>
+
 			<p>{report.message}</p>
 		</li>
 	);

@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 import { reducer, deleteClick, addDevice } from '../../reducers/deviceReducer';
 import Device from './Device';
 import axios from 'axios';
+import { DEVICE_GET_ALL_ROUTE } from '../../utils/routes';
 
 const DevicesContainer = () => {
 	const [{ devices }, dispatch] = useReducer(reducer, reducer());
 
 	useEffect(() => {
 		axios
-			.get('/api/clients/all')
+			.get(DEVICE_GET_ALL_ROUTE)
 			.then(res => dispatch(addDevice(res.data.devices)))
 			.catch(err => console.log(err));
 	}, []);

@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 
@@ -26,8 +26,12 @@ import {
 	defaultState
 } from './reducers/alertReducer';
 import { reducer as reportReducer, addReport } from './reducers/reportReducer';
+import SocketContext from './contexts/SocketContext';
+import Filter from './components/filter/Filter';
+import openSocket from 'socket.io-client';
 
 const App = () => {
+	const [socket, setSocket] = useState(null);
 	const [auth, dispatch] = useReducer(reducer, reducer());
 	const [alert, alertDispatch] = useReducer(alertReducer, defaultState);
 	const [{ reports }, reportDispatch] = useReducer(
@@ -37,7 +41,10 @@ const App = () => {
 
 	useEffect(() => {
 		if (auth.isAuthenticated) {
-			reportsSubscribe((err, report) => {
+			const socket = openSocket('/sidekick', {
+				query: `auth_token=${localStorage.jwtToken.slice(7)}`
+			});
+			reportsSubscribe(socket, (err, report) => {
 				const { _id, name, severity } = report;
 				alertDispatch(
 					addAlert({
@@ -48,6 +55,8 @@ const App = () => {
 				);
 				reportDispatch(addReport(report));
 			});
+
+			setSocket(socket);
 		}
 	}, [auth.isAuthenticated]);
 
@@ -90,30 +99,34 @@ const App = () => {
 							<Navbar alertCount={alert.count} />
 							<div className="container mt-3">
 								{alerts}
-								<Switch>
-									<Route exact path="/" component={Landing} />
-									{/* <Route exact path="/register" component={Register} /> */}
-									<Route exact path="/login" component={Login} />
-									<PrivateRoute
-										exact
-										path="/devices/add"
-										component={AddDevice}
-									/>
-									<PrivateRoute
-										exact
-										path="/devices"
-										component={DevicesContainer}
-									/>
-									<ReportContext.Provider value={reportDispatch}>
-										<ReportStateContext.Provider value={reports}>
-											<PrivateRoute
-												exact
-												path="/reports"
-												component={ReportsContainer}
-											/>
-										</ReportStateContext.Provider>
-									</ReportContext.Provider>
-								</Switch>
+								<ReportContext.Provider value={reportDispatch}>
+									<ReportStateContext.Provider value={reports}>
+										<SocketContext.Provider value={socket}>
+											<Switch>
+												<Route exact path="/" component={Landing} />
+												{/* <Route exact path="/register" component={Register} /> */}
+												<Route exact path="/login" component={Login} />
+												<PrivateRoute
+													exact
+													path="/devices/add"
+													component={AddDevice}
+												/>
+												<PrivateRoute
+													exact
+													path="/devices"
+													component={DevicesContainer}
+												/>
+												<PrivateRoute exact path="/filter" component={Filter} />
+
+												<PrivateRoute
+													exact
+													path="/reports"
+													component={ReportsContainer}
+												/>
+											</Switch>
+										</SocketContext.Provider>
+									</ReportStateContext.Provider>
+								</ReportContext.Provider>
 							</div>
 						</>
 					</Router>

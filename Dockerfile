@@ -7,11 +7,13 @@ RUN apk add -U wireguard-tools bash iptables ip6tables linux-headers gettext --u
 # Backend
 COPY node_server/package*.json ./
 RUN npm install
+RUN npm audit fix
 COPY node_server ./
 
 # Frontend
 COPY frontend/package*.json ./frontend/
 RUN npm --prefix ./frontend install
+RUN npm --prefix ./frontend audit fix
 COPY frontend frontend
 RUN npm --prefix ./frontend run build
 RUN mv ./frontend/build ./public

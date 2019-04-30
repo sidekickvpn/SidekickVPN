@@ -3,6 +3,7 @@ const exec = require('child_process').exec;
 const mongoose = require('mongoose');
 const passport = require('passport');
 const path = require('path');
+const mung = require('express-mung');
 
 const app = express();
 const http = require('http').Server(app);
@@ -25,13 +26,27 @@ if (process.env.NODE_ENV !== 'test') {
 		.catch(err => console.log(err));
 
 	// Setup SocketIO
-	io.on('connection', client => {
+	io.of('sidekick').on('connection', client => {
 		client.on('subscribeToReports', () => {
 			console.log('client is subscribing to reports');
 		});
 
+		client.on('client_record_pos', mode => {
+			console.log('record pos from client, sending to python');
+			io.of('sidekick').emit('record_pos', mode);
+		});
+
+		client.on('client_record_neg', mode => {
+			console.log('record neg from client, sending to python');
+			io.of('sidekick').emit('record_neg', mode);
+		});
+
 		client.on('newPythonReport', report => {
-			io.emit('newReport', report);
+			io.of('sidekick').emit('newReport', report);
+		});
+
+		client.on('pythonTrainingResults', results => {
+			io.of('sidekick').emit('training_results', results);
 		});
 	});
 }
@@ -42,6 +57,20 @@ app.use(express.urlencoded({ extended: false }));
 
 // Passport middleware
 app.use(passport.initialize());
+
+// Anti-sidechannel middleware
+// Adds random data to all responses
+function pad_response(json, req, res) {
+	const min = 16;
+	const max = 32;
+	const size = Math.round(Math.random() * (max - min) + min);
+	let padding = '';
+	for (let i = 0; i < size; i++) {
+		padding += Math.round(Math.random() * 16).toString(16);
+	}
+	json.padding = padding;
+}
+app.use(mung.json(pad_response));
 
 // Socket IO middleware
 app.use((req, res, next) => {
@@ -61,22 +90,8 @@ app.get(
 		const VPN_NAME = process.env.VPN_NAME || 'wgnet0';
 		const VPN_PORT = process.env.VPN_PORT || '51820';
 
-		//ip addr | awk '/inet/ { print $2 }'
-
-		// exec(
-		//   `ip addr | awk '/inet/ { print $2 }' || hostname -I`,
-		//   (err, stdout, stderr) => {
-		//     if (err) {
-		//       console.error(err);
-		//       res.status(500).json({ Error: 'Could not get server ip' });
-		//       return;
-		//     }
-		//     const ips = stdout.split('\n');
-
-		const publicIp = `${process.env.PUBLIC_IP}:${VPN_PORT}`; //|| `${ips[0]}:${VPN_PORT}`;
-		const vpnIp = process.env.VPN_IP; // || ips[ips.length - 2];
-		// const publicIp = `${ips[2].slice(0, ips[2].length - 3)}:${VPN_PORT}`;
-		// const vpnIp = ips[1].slice(0, ips[1].length - 3);
+		const publicIp = `${process.env.PUBLIC_IP}:${VPN_PORT}`;
+		const vpnIp = process.env.VPN_IP;
 
 		exec(`wg show ${VPN_NAME} public-key`, (err, stdout, stderr) => {
 			if (err) {
@@ -97,7 +112,7 @@ app.get(
 	// }
 );
 
-app.use('/api/clients', require('./routes/clients.js'));
+app.use('/api/devices', require('./routes/devices.js'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/reports', require('./routes/reports'));
 

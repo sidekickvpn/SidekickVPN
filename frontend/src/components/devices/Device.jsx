@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { DEVICE_DELETE_BASEROUTE } from '../../utils/routes';
 
 const Device = ({ device, onDeleteClick }) => {
 	const { _id, name, vpnIp, publicKey } = device;
 
 	const handleDelete = async () => {
 		try {
-			await axios.delete(`/api/clients/${_id}`);
+			await axios.delete(`${DEVICE_DELETE_BASEROUTE}${_id}`);
 
 			onDeleteClick(_id);
 		} catch (err) {

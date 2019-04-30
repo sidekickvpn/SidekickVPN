@@ -12,7 +12,7 @@ const Navbar = ({ alertCount }) => {
 		<div className="navbar navbar-expand-lg navbar-dark bg-primary">
 			<div className="container">
 				<Link to="/" className="navbar-brand">
-					VPN Traffic Analysis
+					SidekickVPN
 				</Link>
 				<button
 					className="navbar-toggler"
@@ -60,6 +60,10 @@ const Navbar = ({ alertCount }) => {
 										) : (
 											''
 										)}
+									</NavLink>
+									<NavLink to="/filter" className="nav-item nav-link">
+										<i className="fas fa-filter" />
+										Filter
 									</NavLink>
 									<Link className="nav-item nav-link" to="/devices">
 										<i className="fas fa-user inline-icon" />

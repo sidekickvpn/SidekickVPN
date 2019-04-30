@@ -4,6 +4,7 @@ import { QRCode } from 'react-qr-svg';
 import { Link } from 'react-router-dom';
 import FormInputGroup from '../common/FormInputGroup';
 import useFormInput from '../../effects/useFormInput';
+import { SERVER_INFO_ROUTE, DEVICE_NEW_ROUTE } from '../../utils/routes';
 
 const AddDevice = () => {
 	const device = useFormInput('');
@@ -23,7 +24,7 @@ const AddDevice = () => {
 
 	useEffect(() => {
 		axios
-			.get('/api/config')
+			.get(SERVER_INFO_ROUTE)
 			.then(res => setServerInfo(res.data))
 			.catch(err =>
 				setErrors({ ...errors, serverInfo: 'Error getting server info' })
@@ -50,7 +51,7 @@ const AddDevice = () => {
 
 		if (Object.entries(errors).length === 0 && errors.constructor === Object) {
 			await genConfig();
-			await axios.post('/api/clients', {
+			await axios.post(DEVICE_NEW_ROUTE, {
 				name: device.value,
 				publicKey: publicKey.value,
 				vpnIp: vpnIp.value
@@ -58,33 +59,14 @@ const AddDevice = () => {
 		}
 	};
 
-	// const downloadFile = () => {
-	// 	const element = document.createElement('a');
-
-	// 	element.setAttribute(
-	// 		'href',
-	// 		'data:text/plain;charset=utf-8,' + encodeURIComponent(config)
-	// 	);
-	// 	element.setAttribute('download', `${serverInfo.vpnName}.conf`);
-	// 	element.style.display = 'none';
-	// 	document.body.appendChild(element);
-	// 	element.click();
-	// 	document.body.removeChild(element);
-	// };
-
 	const copyToClipboard = e => {
-		const node = config.current;
+		refConfig.current.select();
+		document.execCommand('copy');
+		setCopySuccess('Copied to Clipboard');
 
-		if (node) {
-			node.select();
-			document.execCommand('copy');
-			// this.setState({ copySuccess: 'Copied to Clipboard' });
-			setCopySuccess('Copied to Clipboard');
-
-			setTimeout(() => {
-				setCopySuccess('');
-			}, 2000);
-		}
+		setTimeout(() => {
+			setCopySuccess('');
+		}, 2000);
 	};
 
 	const genConfig = async () => {
@@ -205,6 +187,13 @@ PersistentKeepalive = 25
 							value={vpnIp.value}
 							onChange={vpnIp.onChange}
 							error={errors.vpnIp}
+							info={
+								<span>
+									<i className="fas fa-info mr-2" />
+									This should be in the form 192.168.10.X, where X is between 2
+									and 254 (Unless you changed the VPN_IP before deloyment).
+								</span>
+							}
 						/>
 
 						<button type="submit" className="btn btn-block btn-primary">

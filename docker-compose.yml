@@ -23,7 +23,25 @@ services:
       VPN_NAME: wgnet0
       VPN_PORT: 51820
       VPN_IP: 192.168.10.1
-      PORT: 5000
-      VPN_IP_6: fd86:ea04:1115::1/64
-      PUBLIC_IP: 192.168.0.101
+      PUBLIC_IP: 10.124.27.83
       MONGO_URI: 'mongodb://localhost:27017/sidekickvpn'
+      ADMIN_PWD: zniFa4ftBu4fcDfN2yibXM3scbBExrxsyUkcjzCrG0LtLPwxwg6168ZH9w8voMelPhBlLggRyr5AW1TdbkQ9hIV9HDTYn3E0HgA9NrK0rQEoUeKRYGWryiHiw7SAcueVZr1Le4jrvhyYBP3sEe5pY2YSDQyIMXwOAh1y7KhQJzDAmRqm8SlviIf4A6catrVWpwO2Irwo
+      PORT: 5000
+  python_api:
+    build:
+      context: ./API
+    ports:
+      - 5000:5000
+      - 27017:27017
+    network_mode: 'host'
+    depends_on:
+      - db
+      - sidekick
+    environment:
+      VPN_NET_INTERFACE: wlp2s0
+      VPN_NAME: wgnet0
+      VPN_PORT: 51820
+      VPN_IP: 192.168.10.1
+      MONGO_URI: 'mongodb://localhost:27017/sidekickvpn'
+      ADMIN_PWD: zniFa4ftBu4fcDfN2yibXM3scbBExrxsyUkcjzCrG0LtLPwxwg6168ZH9w8voMelPhBlLggRyr5AW1TdbkQ9hIV9HDTYn3E0HgA9NrK0rQEoUeKRYGWryiHiw7SAcueVZr1Le4jrvhyYBP3sEe5pY2YSDQyIMXwOAh1y7KhQJzDAmRqm8SlviIf4A6catrVWpwO2Irwo
+      PORT: 5000

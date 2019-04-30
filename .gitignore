@@ -10,3 +10,5 @@ node_modules
 test-keys.js
 **/.env
 .directory
+docker-compose.yml
+**/.nyc_output
