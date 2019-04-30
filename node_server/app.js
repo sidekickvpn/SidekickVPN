@@ -44,6 +44,10 @@ if (process.env.NODE_ENV !== 'test') {
 		client.on('newPythonReport', report => {
 			io.of('sidekick').emit('newReport', report);
 		});
+
+		client.on('pythonTrainingResults', results => {
+			io.of('sidekick').emit('training_results', results);
+		});
 	});
 }
 

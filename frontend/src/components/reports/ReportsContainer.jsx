@@ -23,6 +23,7 @@ const ReportsContainer = () => {
 			.get(REPORT_GET_ALL_ROUTE)
 			.then(res => {
 				const ids = reports.map(report => report._id);
+				console.log(reports);
 				res.data.reports.forEach(report => {
 					if (!ids.includes(report._id)) {
 						dispatch(addReport(report));

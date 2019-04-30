@@ -1,11 +1,10 @@
-# Network Variables
+# Network  Variables
 export VPN_NET_INTERFACE="eth0"
 export VPN_NAME="wgnet0"
 export VPN_PORT="51820"
 export VPN_IP="192.168.10.1"
 export PORT="5000"
 export PUBLIC_IP="<public-ip>"
-
 
 # Install Wireguard, dnsmasq (DNS server), ufw (Firewall), and envsubst (To put above variables into docker-comose file)
 add-apt-repository ppa:wireguard/wireguard
@@ -14,8 +13,8 @@ apt-get install wireguard dnsmasq ufw envsubst
 
 # Configure Firewall
 ufw allow 22/tcp # SSH
-ufw allow 51820/udp # Wireguard
-ufw allow 5000/tcp # Application
+ufw allow ${VPN_PORT}/udp # Wireguard
+ufw allow ${PORT}/tcp # Application
 ufw deny 27017 # Ensure DB is localhost only
 ufw enable
 
@@ -39,4 +38,4 @@ alias user-cli="docker exec -it vpntrafficanalysis_sidekick_1 ./user-cli/bin/use
 docker-compose build
 
 # Run VPN and Application
-docker-compose up
+docker-compose up -d

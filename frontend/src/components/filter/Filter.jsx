@@ -1,11 +1,18 @@
-import React, { useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import classnames from 'classnames';
 import SocketContext from '../../contexts/SocketContext';
 
 const Filter = () => {
+	const [results, setResults] = useState('');
 	const [recordingPos, setRecordingPos] = useState(false);
 	const [recordingNeg, setRecordingNeg] = useState(false);
 	const socket = useContext(SocketContext);
+
+	useEffect(() => {
+		socket.on('training_results', data => {
+			setResults(data);
+		});
+	}, []);
 
 	const handleRecordPos = () => {
 		if (recordingNeg) return;
@@ -77,6 +84,14 @@ const Filter = () => {
 							</>
 						)}
 					</button>
+				</div>
+				<div className="row">
+					<textarea
+						className="col-12 mt-2"
+						rows={10}
+						value={results}
+						readOnly
+					/>
 				</div>
 			</div>
 		</div>

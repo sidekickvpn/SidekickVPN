@@ -60,17 +60,13 @@ const AddDevice = () => {
 	};
 
 	const copyToClipboard = e => {
-		const node = config.current;
+		refConfig.current.select();
+		document.execCommand('copy');
+		setCopySuccess('Copied to Clipboard');
 
-		if (node) {
-			node.select();
-			document.execCommand('copy');
-			setCopySuccess('Copied to Clipboard');
-
-			setTimeout(() => {
-				setCopySuccess('');
-			}, 2000);
-		}
+		setTimeout(() => {
+			setCopySuccess('');
+		}, 2000);
 	};
 
 	const genConfig = async () => {
@@ -191,6 +187,13 @@ PersistentKeepalive = 25
 							value={vpnIp.value}
 							onChange={vpnIp.onChange}
 							error={errors.vpnIp}
+							info={
+								<span>
+									<i className="fas fa-info mr-2" />
+									This should be in the form 192.168.10.X, where X is between 2
+									and 254 (Unless you changed the VPN_IP before deloyment).
+								</span>
+							}
 						/>
 
 						<button type="submit" className="btn btn-block btn-primary">

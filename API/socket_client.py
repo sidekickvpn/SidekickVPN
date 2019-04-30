@@ -31,9 +31,7 @@ class SidekickNamespace(socketio.ClientNamespace):
     self.recording = True
 
     print("Mode: {} - Sniffing on {}".format(mode, interface))
-
-    # Prn for testing purposes
-    pkts = sniff(iface=interface, stop_filter=self.stop_filter, prn=lambda x: print(f"Recording: {self.recording} - {x}"))
+    pkts = sniff(iface=interface, stop_filter=self.stop_filter)
     print("Finished sniffing...")
     
     
@@ -42,22 +40,24 @@ class SidekickNamespace(socketio.ClientNamespace):
       wrpcap(filename, pkts)
     elif mode == "negative":
       wrpcap(filename, pkts)
-      
+
+  def send_results(self, results):
+    """ Sends the results string to the frontend over the socket """
+    self.emit("pythonTrainingResults", results)
 
   def on_record_pos(self, mode):
+    """ Handle Positive Recording event (either start or stop recording) """
     if mode == "start" and self.recording == False:
-      print("Recording positive pkts...")
       self.record_pkts("positive")
     else:
-      print("Stop recording positive pkts...")
       self.recording = False
 
   def on_record_neg(self, mode):
+    """ Handle Negative Recording event (either start or stop recording) """
+
     if mode == "start" and self.recording == False:
-      print("Recording negative pkts...")
       self.record_pkts("negative")
     else:
-      print("Stop recording negative pkts...")
       self.recording = False
 
   def on_connect(self):
@@ -81,8 +81,6 @@ else:
 
 # Get token (removing 'Bearer ')
 token = r.json()['token'][7:]
-
-print("Token: {}".format(token))
 
 # Connect with socket.io using above token to authenticate
 sio.connect('http://localhost:{}?auth_token={}'.format(os.environ.get('PORT'), token))
