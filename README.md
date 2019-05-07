@@ -86,6 +86,50 @@ NOTE: the server-pulic-ip is whatever you used to SSH into the cloud instance.
 
 Once that has loaded you will see a login screen. Enter your crendentials you provided to login.
 
+#### Getting alerts for Google Auto-Complete side-channel detection
+
+Login to the server hosting your Sidekick VPN instance over SSH. Then,
+change directory to the `API` directory. Setup the environment variables
+as follows:
+
+```bash
+cd ~/sidekickvpn/API
+export VPN_NET_INTERFACE=wgnet0
+export PORT=5000
+export ADMIN_PWD=<from docker-compose.yml>
+```
+
+replacing `<from docker-compose.yml>` with the value for `ADMIN_PWD` found
+in the file `docker-compose.yml` after running the `deploy.sh` script.
+
+We can now start listening for side-channels that reveal information leaked
+through the Google Auto-Complete side-channel by running the command:
+
+```bash
+python socket_reports_google_autocomplete.py
+``` 
+
+Information gathered from the traffic pattern analysis performed by this
+script will be sent to and displayed on the Web UI.
+
+#### Getting alerts for SSH private event side-channel detection
+
+Follow the same environment variable setup as was done for the
+*Getting alerts for Google Auto-Complete side-channel detection* example.
+
+We can now start listening for side-channels that reveal information leaked
+through the SSH traffic pattern analysis side-channel by running the command:
+
+```bash
+python socket_reports_ssh_password.py <SSH_SERVER_PORT>
+```
+
+replacing `<SSH_SERVER_PORT>` with the TCP port number which the remote
+SSH server listens on (eg. 22).
+
+Information gathered from the traffic pattern analysis performed by this
+script will be sent to and displayed on the Web UI.
+
 ## FAQ
 
 #### I've forgotten my login credentials (Email and/or password)
