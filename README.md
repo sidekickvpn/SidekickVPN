@@ -1,5 +1,23 @@
 # Sidekick VPN
 
+## Client Setup
+
+### MAC/Linux
+
+MAC/Linux install instructions can be found on the WireGuard website (wireguard.com/install)
+
+### iOS
+
+Search `WireGuard` on the app store for 1st party WireGuard client
+
+### Android
+
+Search `WireGuard` on the Google Play Store for a 1st party WireGuard client
+
+### Windows
+
+Windows can use 3rd party clients such as TunSafe
+
 ## Cloud VPS Instance
 
 You will need to setup a Virtual Private Server (VPS) with a cloud provider of your choice. Some examples include AWS, Google Cloud, Digital Ocean, Vultr, etc. Digital Ocean is a good option, as its \$5 CDN/month option should be enough for most users.
